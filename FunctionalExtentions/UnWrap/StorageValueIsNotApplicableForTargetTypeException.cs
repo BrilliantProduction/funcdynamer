@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunctionalExtentions.Core.UnWrap
+namespace FunctionalExtentions.Core.Unwrap
 {
     public class StorageValueIsNotApplicableForTargetTypeException : Exception
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunctionalExtentions.Core.UnWrap
+namespace FunctionalExtentions.Core.Unwrap
 {
     public class ValueNotFoundException : Exception
     {

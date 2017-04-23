@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FunctionalExtentions.Core.UnWrap
+namespace FunctionalExtentions.Core.Unwrap
 {
     internal class PersistantStorage
     {

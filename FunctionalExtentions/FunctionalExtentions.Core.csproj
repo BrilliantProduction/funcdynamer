@@ -48,13 +48,13 @@
     <Compile Include="UnsafeHandler\ExceptionHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnsafeHandler\InvalidTransformerException.cs" />
-    <Compile Include="UnWrap\KeyNotFoundInStorageException.cs" />
-    <Compile Include="UnWrap\Let.cs" />
-    <Compile Include="UnWrap\PersistantStorage.cs" />
-    <Compile Include="UnWrap\Scope.cs" />
-    <Compile Include="UnWrap\StorageValueIsNotApplicableForTargetTypeException.cs" />
-    <Compile Include="UnWrap\UnwrapExperssion.cs" />
-    <Compile Include="UnWrap\ValueNotFoundException.cs" />
+    <Compile Include="Unwrap\KeyNotFoundInStorageException.cs" />
+    <Compile Include="Unwrap\Let.cs" />
+    <Compile Include="Unwrap\PersistantStorage.cs" />
+    <Compile Include="Unwrap\Scope.cs" />
+    <Compile Include="Unwrap\StorageValueIsNotApplicableForTargetTypeException.cs" />
+    <Compile Include="Unwrap\UnwrapExperssion.cs" />
+    <Compile Include="Unwrap\ValueNotFoundException.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj">
