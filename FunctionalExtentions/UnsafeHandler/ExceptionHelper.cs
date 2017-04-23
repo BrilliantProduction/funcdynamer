@@ -1,12 +1,12 @@
-﻿using FunctionalExtentions.Abstract;
+﻿using FunctionalExtentions.Abstract.ExceptionConverter;
 using System;
 
-namespace FunctionalExtentions
+namespace FunctionalExtentions.Core.UnsafeHandler
 {
     public static class ExceptionHelper
     {
         public static void HandleUnsafeAction<TException, TResultException>
-            (Action action, IExceptionConverter<TException, TResultException> converter)
+            (Action action, ITransformer<TException, TResultException> converter)
             where TException : Exception
             where TResultException : Exception
         {
@@ -16,12 +16,12 @@ namespace FunctionalExtentions
             }
             catch (TException exception)
             {
-                throw converter.ConvertFrom(exception);
+                throw converter.Transform(exception);
             }
         }
 
         public static TResult HandleUnsafeOperation<TException, TResultException, TResult>
-            (Func<TResult> operation, IExceptionConverter<TException, TResultException> converter)
+            (Func<TResult> operation, ITransformer<TException, TResultException> converter)
             where TException : Exception
             where TResultException : Exception
         {
@@ -31,7 +31,7 @@ namespace FunctionalExtentions
             }
             catch (TException exception)
             {
-                throw converter.ConvertFrom(exception);
+                throw converter.Transform(exception);
             }
         }
     }
