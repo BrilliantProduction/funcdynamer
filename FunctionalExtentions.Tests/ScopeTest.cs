@@ -1,6 +1,5 @@
 ﻿using FunctionalExtentions.Core.Unwrap;
 using NUnit.Framework;
-using System;
 
 namespace FunctionalExtentions.Tests
 {
@@ -52,7 +51,7 @@ namespace FunctionalExtentions.Tests
             }
 
             //Act & Assert
-            Assert.Throws<Exception>(() => scope.GetValue<int>("testA"));
+            Assert.Throws<ValueNotFoundException>(() => scope.GetValue<int>("testA"));
         }
     }
 }

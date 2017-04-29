@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\OptionalCollection.cs" />
+    <Compile Include="Collections\OptionalCollectionsExtentions.cs" />
     <Compile Include="Currying\CurryHelper.cs" />
     <Compile Include="Optional.cs" />
     <Compile Include="OptionalCastException.cs" />

@@ -34,12 +34,12 @@ namespace FunctionalExtentions.Core.Currying
         {
             if (creator != null)
             {
-                if (param != null && param.HasValue)
+                if (param.HasValue)
                 {
                     return creator(param.Value);
                 }
             }
-            return null;
+            return Optional<R>.CreateOptional();
         }
     }
 }

@@ -1,27 +1,46 @@
-﻿using System;
+﻿using FunctionalExtentions.Abstract;
+using System;
 
 namespace FunctionalExtentions.Core
 {
-    public class Optional<Wrapped>
+    public class Optional<Wrapped> : IOptional<Wrapped>
     {
         private WrappedObject _value;
 
-        public Optional()
+        private Optional()
         {
             _value = WrappedObject.CreateDefault();
         }
 
-        public Optional(Wrapped instance)
+        private Optional(Wrapped value)
         {
-            _value = WrappedObject.Create(instance);
+            _value = WrappedObject.Create(value);
         }
 
-        public bool HasValue => _value.HasValue;
+        public static Optional<Wrapped> CreateOptional()
+        {
+            return new Optional<Wrapped>();
+        }
+
+        public static Optional<Wrapped> CreateOptional(Wrapped instance)
+        {
+            return new Optional<Wrapped>(instance);
+        }
+
+        public bool HasValue
+        {
+            get
+            {
+                CreateDefaultValueIfNull();
+                return _value.HasValue;
+            }
+        }
 
         public Wrapped Value
         {
             get
             {
+                CreateDefaultValueIfNull();
                 return _value.TryGetValueOrNull<Wrapped>();
             }
         }
@@ -63,8 +82,8 @@ namespace FunctionalExtentions.Core
 
         public static implicit operator Optional<Wrapped>(Wrapped value)
         {
-            if (value != null) return new Optional<Wrapped>(value);
-            return new Optional<Wrapped>();
+            if (value != null) return CreateOptional(value);
+            return CreateOptional();
         }
 
         public static explicit operator Wrapped(Optional<Wrapped> value)
@@ -75,6 +94,14 @@ namespace FunctionalExtentions.Core
         public T Cast<T>()
         {
             return _value.TryGetValueOrNull<T>();
+        }
+
+        private void CreateDefaultValueIfNull()
+        {
+            if (_value == null)
+            {
+                _value = WrappedObject.CreateDefault();
+            }
         }
 
         private class WrappedObject

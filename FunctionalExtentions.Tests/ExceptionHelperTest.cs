@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FunctionalExtentions.Core.UnsafeHandler;
+using NUnit.Framework;
 using System;
 
 namespace FunctionalExtentions.Tests

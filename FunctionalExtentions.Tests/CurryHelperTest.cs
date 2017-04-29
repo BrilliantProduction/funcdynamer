@@ -13,7 +13,7 @@ namespace FunctionalExtentions.Tests
             string obj = null;
 
             //Act & Assert
-            Assert.IsNull(CurryHelper.Apply<string, bool>((e) => e == null, obj));
+            Assert.IsFalse(CurryHelper.Apply<string, bool>((e) => e == null, obj).HasValue);
         }
 
         [Test]
@@ -23,7 +23,7 @@ namespace FunctionalExtentions.Tests
             int? val = null;
 
             //Act & Assert
-            Assert.IsNull(CurryHelper.Apply<int?, bool>((e) => e == null, val));
+            Assert.IsFalse(CurryHelper.Apply<int?, bool>((e) => e == null, val).HasValue);
         }
     }
 }

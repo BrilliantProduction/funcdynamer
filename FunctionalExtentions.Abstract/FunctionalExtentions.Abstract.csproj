@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExceptionTransformation\ITransformer.cs" />
+    <Compile Include="IOptional.cs" />
+    <Compile Include="OptionalCollections\IOptionalCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
