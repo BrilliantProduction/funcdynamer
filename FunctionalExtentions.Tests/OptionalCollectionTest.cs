@@ -1,10 +1,6 @@
 ﻿using FunctionalExtentions.Collections;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FunctionalExtentions.Tests
 {
@@ -22,6 +18,20 @@ namespace FunctionalExtentions.Tests
 
             //Assert
             Assert.IsNotNull(optionalList);
+        }
+
+        [Test]
+        public void AddToOptionalCollectionWrapsToOptional()
+        {
+            //Arrange
+            var collection = new List<int>() { 1, 2, 3, 4 };
+            var optional = collection.AsOptional();
+
+            //Act
+            optional.Add(22);
+
+            //Assert
+            Assert.AreEqual(5, optional.Count);
         }
     }
 }

@@ -21,15 +21,6 @@ namespace FunctionalExtentions.Core.Unwrap
             public Type ItemType => itemType;
 
             public object ItemValue => itemValue;
-
-            //public T GetValue<T>()
-            //{
-            //    if (typeof(T).IsSubclassOf(itemType) || itemType == typeof(T))
-            //    {
-            //        return (T)itemValue;
-            //    }
-            //    return default(T);
-            //}
         }
 
         public PersistantStorage()

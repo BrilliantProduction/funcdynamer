@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FunctionalExtentions.Abstract;
 using FunctionalExtentions.Abstract.OptionalCollections;
+using FunctionalExtentions.Core;
 
 namespace FunctionalExtentions.Collections
 {
@@ -23,6 +24,11 @@ namespace FunctionalExtentions.Collections
         public int Count => _collection.Count;
 
         public bool IsReadOnly => _collection.IsReadOnly;
+
+        public void Add(T item)
+        {
+            Add(Optional<T>.CreateOptional(item));
+        }
 
         public void Add(IOptional<T> item)
         {
@@ -62,6 +68,11 @@ namespace FunctionalExtentions.Collections
         public IEnumerator<IOptional<T>> GetEnumerator()
         {
             return _collection.GetEnumerator();
+        }
+
+        public Type GetUnderlyingCollectionType()
+        {
+            return _collection.GetType();
         }
 
         public bool Remove(IOptional<T> item)

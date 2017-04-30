@@ -54,6 +54,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CollectionExtentionsTest.cs" />
     <Compile Include="CurryHelperTest.cs" />
     <Compile Include="ExceptionHelperTest.cs" />
     <Compile Include="OptionalCollectionTest.cs" />

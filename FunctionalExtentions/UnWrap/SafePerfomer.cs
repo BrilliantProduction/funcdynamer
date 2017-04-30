@@ -2,11 +2,11 @@
 
 namespace FunctionalExtentions.Core.Unwrap
 {
-    public static class Let
+    public static class SafePerfomer
     {
         private static readonly Scope _scope;
 
-        static Let()
+        static SafePerfomer()
         {
             _scope = new Scope();
         }

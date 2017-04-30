@@ -1,5 +1,4 @@
-﻿using FunctionalExtentions.Core;
-using System;
+﻿using System;
 
 namespace FunctionalExtentions.Core.Currying
 {
