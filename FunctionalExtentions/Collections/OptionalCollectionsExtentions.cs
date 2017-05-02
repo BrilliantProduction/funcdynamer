@@ -3,75 +3,83 @@ using FunctionalExtentions.Abstract.OptionalCollections;
 using FunctionalExtentions.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+using System.Diagnostics;
 
 namespace FunctionalExtentions.Collections
 {
     public static class OptionalCollectionsExtentions
     {
+        [Flags]
+        private enum CollectionFlags
+        {
+            Default = 0,
+            IsOptional = 2,
+            IsArray = 4
+        }
+
+        private static readonly Type optionalCollectionInterfaceType = typeof(IOptionalCollection<>);
+        private const CollectionFlags OptionalArray = CollectionFlags.IsOptional | CollectionFlags.IsArray;
+
         public static IOptionalCollection<T> AsOptional<T>(this ICollection<T> collection)
         {
-            var optionalCollection = CreateEmptyCollection<T, IOptional<T>>(collection.GetType(), collection);
-
-            foreach (var t in collection)
+            var isOptional = DetectOptionalFlags(collection);
+            if ((isOptional & CollectionFlags.IsOptional) == CollectionFlags.IsOptional)
             {
-                optionalCollection.Add(Optional<T>.CreateOptional(t));
+                throw new OptionalCollectionWrapException();
             }
-
-            optionalCollection = ConvertBackIfArray(collection.GetType(), optionalCollection, collection);
+            var optionalCollection = ModifyCollection<T, IOptional<T>>(collection, (x, y) =>
+            {
+                foreach (var t in x)
+                {
+                    y.Add(Optional<T>.CreateOptional(t));
+                }
+                return y;
+            });
             return new OptionalCollection<T>(optionalCollection);
         }
 
         public static ICollection<TResult> FlatMap<T, TResult>(this ICollection<IOptional<T>> collection, Func<T, TResult> map)
         {
-            ICollection<TResult> result = CreateEmptyCollection<IOptional<T>, TResult>(collection.GetType(), collection);
-            foreach (var item in collection)
+            return ModifyCollection<IOptional<T>, TResult>(collection, (x, y) =>
             {
-                if (item != null && item.HasValue)
+                foreach (var item in x)
                 {
-                    result.Add(map(item.Value));
+                    if (item != null && item.HasValue)
+                    {
+                        y.Add(map(item.Value));
+                    }
                 }
-            }
-
-            result = ConvertBackIfArray(collection.GetType(), result, collection);
-            return result;
+                return y;
+            });
         }
 
         public static ICollection<TResult> FlatMap<T, TResult>(this IOptionalCollection<T> collection, Func<IOptional<T>, TResult> map)
         {
-            ICollection<TResult> result = CreateEmptyCollection<IOptional<T>, TResult>(collection.GetType(), collection);
-            foreach (var item in collection)
-            {
-                result.Add(map(item));
-            }
-
-            result = ConvertBackIfArray(collection.GetType(), result, collection);
-            return result;
+            return FlatMap((ICollection<IOptional<T>>)collection, map);
         }
 
         public static ICollection<TResult> FlatMap<T, TResult>(this ICollection<T> collection, Func<T, TResult> map)
         {
-            ICollection<TResult> result = CreateEmptyCollection<T, TResult>(collection.GetType(), collection);
-            foreach (var item in collection)
+            return ModifyCollection<T, TResult>(collection, (x, y) =>
             {
-                result.Add(map(item));
-            }
-
-            result = ConvertBackIfArray(collection.GetType(), result, collection);
-            return result;
+                foreach (var item in x)
+                {
+                    y.Add(map(item));
+                }
+                return y;
+            });
         }
 
         public static ICollection<TResult> Map<T, TResult>(this ICollection<T> collection, Func<T, TResult> map)
         {
-            ICollection<TResult> result = CreateEmptyCollection<T, TResult>(collection.GetType(), collection);
-            foreach (var item in collection)
+            return ModifyCollection<T, TResult>(collection, (x, y) =>
             {
-                result.Add(map(item));
-            }
-
-            result = ConvertBackIfArray(collection.GetType(), result, collection);
-            return result;
+                foreach (var item in x)
+                {
+                    y.Add(map(item));
+                }
+                return y;
+            });
         }
 
         public static TResult Reduce<T, TResult>(this ICollection<T> collection, TResult defaultValue, Func<TResult, T, TResult> combine)
@@ -85,86 +93,72 @@ namespace FunctionalExtentions.Collections
 
         public static ICollection<T> Filter<T>(this ICollection<T> collection, Predicate<T> filter)
         {
-            ICollection<T> result = CreateEmptyCollection<T, T>(collection.GetType(), collection);
-            foreach (var item in collection)
+            return ModifyCollection<T, T>(collection, (x, y) =>
             {
-                if (filter(item))
+                foreach (var item in x)
                 {
-                    result.Add(item);
+                    if (filter(item))
+                    {
+                        y.Add(item);
+                    }
                 }
-            }
+                return y;
+            });
+        }
 
-            result = ConvertBackIfArray(collection.GetType(), result, collection);
+        private static ICollection<TResult> ModifyCollection<T, TResult>(ICollection<T> collection, Func<ICollection<T>, ICollection<TResult>, ICollection<TResult>> operation)
+        {
+            CollectionFlags isOptional = DetectOptionalFlags(collection);
+            ICollection<TResult> result = CreateEmptyCollection<TResult>(collection.GetType(), isOptional);
+            result = operation(collection, result);
+
+            result = ConvertBackIfArray(isOptional, result);
+
             return result;
         }
 
-        private static bool IsOptionalCollection(Type collectionType)
+        private static CollectionFlags DetectOptionalFlags(object collection)
         {
-            var optionalCollectionInterfaceType = typeof(IOptionalCollection<>);
-            return collectionType.IsGenericType &&
-                collectionType.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition().Equals(optionalCollectionInterfaceType));
+            CollectionFlags res = CollectionFlags.Default;
+            var optional = collection as IOptionalCollectionInfo;
+            if (optional != null)
+            {
+                res = CollectionFlags.IsOptional;
+                if (optional.IsUnderlyingArray)
+                {
+                    res |= CollectionFlags.IsArray;
+                }
+            }
+            else if (collection is Array)
+            {
+                res |= CollectionFlags.IsArray;
+            }
+            return res;
         }
 
-        private static ICollection<TResult> ConvertBackIfArray<T, TResult>(Type originalCollectionType, ICollection<TResult> currentCollection, ICollection<T> original)
+        private static ICollection<TResult> ConvertBackIfArray<TResult>(
+            CollectionFlags isOptional, ICollection<TResult> currentCollection)
         {
-            if (originalCollectionType.IsArray)
+            if (isOptional == CollectionFlags.IsArray || isOptional == OptionalArray)
             {
-                currentCollection = ((List<TResult>)currentCollection).ToArray();
-            }
-            else if (IsOptionalCollection(originalCollectionType) && IsOptionalArray(originalCollectionType, original))
-            {
-                currentCollection = ((List<TResult>)currentCollection).ToArray();
+                currentCollection = (currentCollection as List<TResult>).ToArray();
             }
             return currentCollection;
         }
 
-        private static ICollection<TResult> CreateEmptyCollection<T, TResult>(Type collectionType, ICollection<T> source)
+        private static ICollection<TResult> CreateEmptyCollection<TResult>(Type collectionType, CollectionFlags isOptional)
         {
-            ICollection<TResult> result;
-            if (IsOptionalCollection(collectionType))
+            ICollection<TResult> result = null;
+
+            if (isOptional == CollectionFlags.IsArray || isOptional == OptionalArray)
             {
-                result = CreateEmptyOptionalCollection<T, TResult>(collectionType, source);
+                result = new List<TResult>();
             }
             else
             {
-                result = CreateEmptySystemCollection<TResult>(collectionType);
+                result = EmptyCollectionHelper.CreateCollectionOfType<TResult>(collectionType);
             }
             return result;
-        }
-
-        private static bool IsOptionalArray(Type optionalCollectionType, object typeValue)
-        {
-            var field = optionalCollectionType.GetField("_collection", BindingFlags.GetField | BindingFlags.Instance | BindingFlags.NonPublic);
-            var type = field.GetValue(typeValue).GetType();
-            return type.IsArray;
-        }
-
-        private static ICollection<TResult> CreateEmptyOptionalCollection<T, TResult>(Type collectionType, ICollection<T> source)
-        {
-            if (IsOptionalArray(collectionType, source))
-            {
-                return new List<TResult>();
-            }
-            Type targetType = typeof(TResult);
-            if (targetType.IsGenericType)
-            {
-                targetType = targetType.GenericTypeArguments[0];
-            }
-            Type genericCollectionType = collectionType.GetGenericTypeDefinition();
-            Type resCollectionType = genericCollectionType.MakeGenericType(targetType);
-            return (ICollection<TResult>)Activator.CreateInstance(resCollectionType);
-        }
-
-        private static ICollection<TResult> CreateEmptySystemCollection<TResult>(Type collectionType)
-        {
-            if (collectionType.IsArray)
-            {
-                return new List<TResult>();
-            }
-            Type targetType = typeof(TResult);
-            Type genericCollectionType = collectionType.GetGenericTypeDefinition();
-            Type resCollectionType = genericCollectionType.MakeGenericType(targetType);
-            return (ICollection<TResult>)Activator.CreateInstance(resCollectionType);
         }
     }
 }

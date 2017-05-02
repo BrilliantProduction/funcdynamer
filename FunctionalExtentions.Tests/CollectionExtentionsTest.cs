@@ -111,5 +111,15 @@ namespace FunctionalExtentions.Tests
             Assert.IsNotEmpty(mapped);
             Assert.IsInstanceOf<IOptional<int>[]>(mapped);
         }
+
+        [Test]
+        public void OptionalCollectionOfOptionalCollectionTest()
+        {
+            //Arrange
+            var optionalInts = new int[] { 1, 2, 3, 4, 5 };
+
+            //Act & Assert
+            Assert.Throws<OptionalCollectionWrapException>(() => optionalInts.AsOptional().AsOptional());
+        }
     }
 }

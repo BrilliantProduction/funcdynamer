@@ -10,15 +10,18 @@ namespace FunctionalExtentions.Collections
     public class OptionalCollection<T> : IOptionalCollection<T>
     {
         private ICollection<IOptional<T>> _collection;
+        private bool _isUnderlyingArray;
 
         public OptionalCollection()
         {
             _collection = new List<IOptional<T>>();
+            _isUnderlyingArray = false;
         }
 
         public OptionalCollection(ICollection<IOptional<T>> collection)
         {
             _collection = collection;
+            _isUnderlyingArray = collection.GetType().IsArray;
         }
 
         public int Count => _collection.Count;
@@ -70,10 +73,7 @@ namespace FunctionalExtentions.Collections
             return _collection.GetEnumerator();
         }
 
-        public Type GetUnderlyingCollectionType()
-        {
-            return _collection.GetType();
-        }
+        public bool IsUnderlyingArray => _isUnderlyingArray;
 
         public bool Remove(IOptional<T> item)
         {
