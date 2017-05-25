@@ -5,54 +5,30 @@ namespace FunctionalExtentions.Collections
 {
     internal static class EmptyCollectionHelper
     {
-        private static readonly string ListName = typeof(List<>).Name;
-        private static readonly string LinkedListName = typeof(LinkedList<>).Name;
-        private static readonly string SortedSetName = typeof(SortedSet<>).Name;
-        private static readonly string HashSetName = typeof(HashSet<>).Name;
-
         public static ICollection<T> CreateCollectionOfType<T>(Type collectionType)
         {
-            string collectionName = collectionType.Name;
-            if (collectionName.Equals(ListName))
+            ICollection<T> result = null;
+            if (collectionType == typeof(List<T>))
             {
-                return CreateList<T>();
+                result = new List<T>();
             }
-            else if (collectionName.Equals(LinkedListName))
+            else if (collectionType == typeof(LinkedList<T>))
             {
-                return CreateLinkedList<T>();
+                result = new LinkedList<T>();
             }
-            else if (collectionName.Equals(SortedSetName))
+            else if (collectionType == typeof(SortedSet<T>))
             {
-                return CreateSortedSet<T>();
+                result = new SortedSet<T>();
             }
-            else if (collectionName.Equals(HashSetName))
+            else if (collectionType == typeof(HashSet<T>))
             {
-                return CreateHashSet<T>();
+                result = new HashSet<T>();
             }
             else
             {
-                return CreateCollectionWithActivator<T>(collectionType);
+                result = CreateCollectionWithActivator<T>(collectionType);
             }
-        }
-
-        private static ICollection<T> CreateList<T>()
-        {
-            return new List<T>();
-        }
-
-        private static ICollection<T> CreateLinkedList<T>()
-        {
-            return new LinkedList<T>();
-        }
-
-        private static ICollection<T> CreateSortedSet<T>()
-        {
-            return new SortedSet<T>();
-        }
-
-        private static ICollection<T> CreateHashSet<T>()
-        {
-            return new HashSet<T>();
+            return result;
         }
 
         private static ICollection<T> CreateCollectionWithActivator<T>(Type collectionType)

@@ -3,7 +3,6 @@ using FunctionalExtentions.Abstract.OptionalCollections;
 using FunctionalExtentions.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace FunctionalExtentions.Collections
 {
@@ -17,7 +16,6 @@ namespace FunctionalExtentions.Collections
             IsArray = 4
         }
 
-        private static readonly Type optionalCollectionInterfaceType = typeof(IOptionalCollection<>);
         private const CollectionFlags OptionalArray = CollectionFlags.IsOptional | CollectionFlags.IsArray;
 
         public static IOptionalCollection<T> AsOptional<T>(this ICollection<T> collection)
@@ -27,30 +25,13 @@ namespace FunctionalExtentions.Collections
             {
                 throw new OptionalCollectionWrapException();
             }
-            var optionalCollection = ModifyCollection<T, IOptional<T>>(collection, (x, y) =>
-            {
-                foreach (var t in x)
-                {
-                    y.Add(Optional<T>.CreateOptional(t));
-                }
-                return y;
-            });
+            var optionalCollection = PerformAction<T, IOptional<T>>(collection, (x, y) => y.Add(Optional<T>.CreateOptional(x)));
             return new OptionalCollection<T>(optionalCollection);
         }
 
         public static ICollection<TResult> FlatMap<T, TResult>(this ICollection<IOptional<T>> collection, Func<T, TResult> map)
         {
-            return ModifyCollection<IOptional<T>, TResult>(collection, (x, y) =>
-            {
-                foreach (var item in x)
-                {
-                    if (item != null && item.HasValue)
-                    {
-                        y.Add(map(item.Value));
-                    }
-                }
-                return y;
-            });
+            return PerformAction<IOptional<T>, TResult>(collection, (x, y) => y.Add(map(x.Value)), (x) => x != null && x.HasValue);
         }
 
         public static ICollection<TResult> FlatMap<T, TResult>(this IOptionalCollection<T> collection, Func<IOptional<T>, TResult> map)
@@ -60,26 +41,12 @@ namespace FunctionalExtentions.Collections
 
         public static ICollection<TResult> FlatMap<T, TResult>(this ICollection<T> collection, Func<T, TResult> map)
         {
-            return ModifyCollection<T, TResult>(collection, (x, y) =>
-            {
-                foreach (var item in x)
-                {
-                    y.Add(map(item));
-                }
-                return y;
-            });
+            return PerformAction<T, TResult>(collection, (x, y) => y.Add(map(x)));
         }
 
         public static ICollection<TResult> Map<T, TResult>(this ICollection<T> collection, Func<T, TResult> map)
         {
-            return ModifyCollection<T, TResult>(collection, (x, y) =>
-            {
-                foreach (var item in x)
-                {
-                    y.Add(map(item));
-                }
-                return y;
-            });
+            return PerformAction<T, TResult>(collection, (x, y) => y.Add(map(x)));
         }
 
         public static TResult Reduce<T, TResult>(this ICollection<T> collection, TResult defaultValue, Func<TResult, T, TResult> combine)
@@ -93,27 +60,23 @@ namespace FunctionalExtentions.Collections
 
         public static ICollection<T> Filter<T>(this ICollection<T> collection, Predicate<T> filter)
         {
-            return ModifyCollection<T, T>(collection, (x, y) =>
-            {
-                foreach (var item in x)
-                {
-                    if (filter(item))
-                    {
-                        y.Add(item);
-                    }
-                }
-                return y;
-            });
+            return PerformAction<T, T>(collection, (x, y) => y.Add(x), filter);
         }
 
-        private static ICollection<TResult> ModifyCollection<T, TResult>(ICollection<T> collection, Func<ICollection<T>, ICollection<TResult>, ICollection<TResult>> operation)
+        private static ICollection<TResult> PerformAction<T, TResult>(ICollection<T> collection, Action<T, ICollection<TResult>> action, Predicate<T> condition = null)
         {
             CollectionFlags isOptional = DetectOptionalFlags(collection);
             ICollection<TResult> result = CreateEmptyCollection<TResult>(collection.GetType(), isOptional);
-            result = operation(collection, result);
+
+            foreach (var item in collection)
+            {
+                if (condition == null || condition(item))
+                {
+                    action(item, result);
+                }
+            }
 
             result = ConvertBackIfArray(isOptional, result);
-
             return result;
         }
 
