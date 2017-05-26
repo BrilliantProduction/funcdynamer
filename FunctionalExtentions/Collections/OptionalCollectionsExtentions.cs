@@ -3,6 +3,7 @@ using FunctionalExtentions.Abstract.OptionalCollections;
 using FunctionalExtentions.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FunctionalExtentions.Collections
 {
@@ -17,6 +18,7 @@ namespace FunctionalExtentions.Collections
         }
 
         private const CollectionFlags OptionalArray = CollectionFlags.IsOptional | CollectionFlags.IsArray;
+        private static readonly Type OptionalCollectionType = typeof(OptionalCollection<>);
 
         public static IOptionalCollection<T> AsOptional<T>(this ICollection<T> collection)
         {
@@ -25,13 +27,13 @@ namespace FunctionalExtentions.Collections
             {
                 throw new OptionalCollectionWrapException();
             }
-            var optionalCollection = PerformAction<T, IOptional<T>>(collection, (x, y) => y.Add(Optional<T>.CreateOptional(x)));
+            var optionalCollection = PerformAction<T, IOptional<T>>(collection, (x) => Optional<T>.CreateOptional(x));
             return new OptionalCollection<T>(optionalCollection);
         }
 
         public static ICollection<TResult> FlatMap<T, TResult>(this ICollection<IOptional<T>> collection, Func<T, TResult> map)
         {
-            return PerformAction<IOptional<T>, TResult>(collection, (x, y) => y.Add(map(x.Value)), (x) => x != null && x.HasValue);
+            return PerformAction<IOptional<T>, TResult>(collection, (x) => map(x.Value), (x) => x != null && x.HasValue);
         }
 
         public static ICollection<TResult> FlatMap<T, TResult>(this IOptionalCollection<T> collection, Func<IOptional<T>, TResult> map)
@@ -41,12 +43,12 @@ namespace FunctionalExtentions.Collections
 
         public static ICollection<TResult> FlatMap<T, TResult>(this ICollection<T> collection, Func<T, TResult> map)
         {
-            return PerformAction<T, TResult>(collection, (x, y) => y.Add(map(x)));
+            return PerformAction<T, TResult>(collection, map);
         }
 
         public static ICollection<TResult> Map<T, TResult>(this ICollection<T> collection, Func<T, TResult> map)
         {
-            return PerformAction<T, TResult>(collection, (x, y) => y.Add(map(x)));
+            return PerformAction<T, TResult>(collection, map);
         }
 
         public static TResult Reduce<T, TResult>(this ICollection<T> collection, TResult defaultValue, Func<TResult, T, TResult> combine)
@@ -60,39 +62,52 @@ namespace FunctionalExtentions.Collections
 
         public static ICollection<T> Filter<T>(this ICollection<T> collection, Predicate<T> filter)
         {
-            return PerformAction<T, T>(collection, (x, y) => y.Add(x), filter);
+            return PerformAction<T, T>(collection, x => x, filter);
         }
 
-        private static ICollection<TResult> PerformAction<T, TResult>(ICollection<T> collection, Action<T, ICollection<TResult>> action, Predicate<T> condition = null)
+        private static ICollection<TResult> PerformAction<T, TResult>(ICollection<T> collection, Func<T, TResult> map, Predicate<T> condition = null)
         {
+            Stopwatch timer = Stopwatch.StartNew();
             CollectionFlags isOptional = DetectOptionalFlags(collection);
+            timer.Stop();
+            Console.WriteLine($"{nameof(DetectOptionalFlags)} taked {timer.Elapsed}");
+            timer.Restart();
             ICollection<TResult> result = CreateEmptyCollection<TResult>(collection.GetType(), isOptional);
-
+            timer.Stop();
+            Console.WriteLine($"{nameof(CreateEmptyCollection)} taked {timer.Elapsed}");
+            timer.Restart();
             foreach (var item in collection)
             {
                 if (condition == null || condition(item))
                 {
-                    action(item, result);
+                    result.Add(map(item));
                 }
             }
+            timer.Stop();
+            Console.WriteLine($"Work cycle taked {timer.Elapsed}");
+            timer.Restart();
 
             result = ConvertBackIfArray(isOptional, result);
+            timer.Stop();
+            Console.WriteLine($"{nameof(ConvertBackIfArray)} taked {timer.Elapsed}");
+
             return result;
         }
 
         private static CollectionFlags DetectOptionalFlags(object collection)
         {
+            var collectionType = collection.GetType();
             CollectionFlags res = CollectionFlags.Default;
-            var optional = collection as IOptionalCollectionInfo;
-            if (optional != null)
+            var optionalType = collectionType.IsGenericType ? collectionType.GetGenericTypeDefinition() : collectionType;
+            if (optionalType == OptionalCollectionType)
             {
                 res = CollectionFlags.IsOptional;
-                if (optional.IsUnderlyingArray)
+                if ((collection as IOptionalCollectionInfo).IsUnderlyingArray)
                 {
                     res |= CollectionFlags.IsArray;
                 }
             }
-            else if (collection is Array)
+            else if (collectionType.IsArray)
             {
                 res |= CollectionFlags.IsArray;
             }
@@ -104,14 +119,21 @@ namespace FunctionalExtentions.Collections
         {
             if (isOptional == CollectionFlags.IsArray || isOptional == OptionalArray)
             {
-                currentCollection = (currentCollection as List<TResult>).ToArray();
+                var tempCollection = (currentCollection as List<TResult>);
+                var array = new TResult[tempCollection.Count];
+                int i = 0;
+                foreach (var item in tempCollection)
+                {
+                    array[i++] = item;
+                }
+                currentCollection = array;
             }
             return currentCollection;
         }
 
         private static ICollection<TResult> CreateEmptyCollection<TResult>(Type collectionType, CollectionFlags isOptional)
         {
-            ICollection<TResult> result = null;
+            ICollection<TResult> result;
 
             if (isOptional == CollectionFlags.IsArray || isOptional == OptionalArray)
             {

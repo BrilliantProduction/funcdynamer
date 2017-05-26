@@ -7,28 +7,7 @@ namespace FunctionalExtentions.Collections
     {
         public static ICollection<T> CreateCollectionOfType<T>(Type collectionType)
         {
-            ICollection<T> result = null;
-            if (collectionType == typeof(List<T>))
-            {
-                result = new List<T>();
-            }
-            else if (collectionType == typeof(LinkedList<T>))
-            {
-                result = new LinkedList<T>();
-            }
-            else if (collectionType == typeof(SortedSet<T>))
-            {
-                result = new SortedSet<T>();
-            }
-            else if (collectionType == typeof(HashSet<T>))
-            {
-                result = new HashSet<T>();
-            }
-            else
-            {
-                result = CreateCollectionWithActivator<T>(collectionType);
-            }
-            return result;
+            return CreateCollectionWithActivator<T>(collectionType);
         }
 
         private static ICollection<T> CreateCollectionWithActivator<T>(Type collectionType)
@@ -36,7 +15,7 @@ namespace FunctionalExtentions.Collections
             Type targetType = typeof(T);
             Type genericCollectionType = collectionType.GetGenericTypeDefinition();
             Type resCollectionType = genericCollectionType.MakeGenericType(targetType);
-            return (ICollection<T>)Activator.CreateInstance(resCollectionType);
+            return (ICollection<T>)DynamicActivator.MakeObject(resCollectionType);
         }
     }
 }

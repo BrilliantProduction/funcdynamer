@@ -72,6 +72,7 @@ namespace FunctionalExtentions
 
             timer.Restart();
             ConstructorInfo constructor = instanceType.GetConstructor(argTypes);
+
             timer.Stop();
             Console.WriteLine($"Constructor extracting taked {timer.Elapsed}");
 

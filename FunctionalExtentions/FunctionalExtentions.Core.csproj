@@ -40,9 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activator\DynamicConstructor.cs" />
     <Compile Include="Activator\FactoryObject.cs" />
     <Compile Include="Activator\FactoryObjectCreator.cs" />
     <Compile Include="Activator\InstanceDelegate.cs" />
+    <Compile Include="Activator\TypeConstructor.cs" />
     <Compile Include="Collections\EmptyCollectionHelper.cs" />
     <Compile Include="Collections\OptionalCollection.cs" />
     <Compile Include="Collections\OptionalCollectionsExtentions.cs" />
