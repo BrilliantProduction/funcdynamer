@@ -22,7 +22,7 @@ namespace FunctionalExtentions.Collections
 
         public static IOptionalCollection<T> AsOptional<T>(this ICollection<T> collection)
         {
-            var isOptional = DetectOptionalFlags(collection);
+            var isOptional = DetectOptionalFlags(collection.GetType(), collection);
             if ((isOptional & CollectionFlags.IsOptional) == CollectionFlags.IsOptional)
             {
                 throw new OptionalCollectionWrapException();
@@ -68,13 +68,14 @@ namespace FunctionalExtentions.Collections
         private static ICollection<TResult> PerformAction<T, TResult>(ICollection<T> collection, Func<T, TResult> map, Predicate<T> condition = null)
         {
             Stopwatch timer = Stopwatch.StartNew();
-            CollectionFlags isOptional = DetectOptionalFlags(collection);
+            var collectionType = collection.GetType();
+            CollectionFlags isOptional = DetectOptionalFlags(collectionType, collection);
             timer.Stop();
-            Console.WriteLine($"{nameof(DetectOptionalFlags)} taked {timer.Elapsed}");
+            Console.WriteLine($"{nameof(DetectOptionalFlags)} taked {timer.ElapsedMilliseconds} ms");
             timer.Restart();
-            ICollection<TResult> result = CreateEmptyCollection<TResult>(collection.GetType(), isOptional);
+            ICollection<TResult> result = CreateEmptyCollection<TResult>(collectionType, isOptional);
             timer.Stop();
-            Console.WriteLine($"{nameof(CreateEmptyCollection)} taked {timer.Elapsed}");
+            Console.WriteLine($"{nameof(CreateEmptyCollection)} taked {timer.ElapsedMilliseconds} ms");
             timer.Restart();
             foreach (var item in collection)
             {
@@ -84,19 +85,18 @@ namespace FunctionalExtentions.Collections
                 }
             }
             timer.Stop();
-            Console.WriteLine($"Work cycle taked {timer.Elapsed}");
+            Console.WriteLine($"Work cycle taked {timer.ElapsedMilliseconds} ms");
             timer.Restart();
 
             result = ConvertBackIfArray(isOptional, result);
             timer.Stop();
-            Console.WriteLine($"{nameof(ConvertBackIfArray)} taked {timer.Elapsed}");
+            Console.WriteLine($"{nameof(ConvertBackIfArray)} taked {timer.ElapsedMilliseconds} ms");
 
             return result;
         }
 
-        private static CollectionFlags DetectOptionalFlags(object collection)
+        private static CollectionFlags DetectOptionalFlags(Type collectionType, object collection)
         {
-            var collectionType = collection.GetType();
             CollectionFlags res = CollectionFlags.Default;
             var optionalType = collectionType.IsGenericType ? collectionType.GetGenericTypeDefinition() : collectionType;
             if (optionalType == OptionalCollectionType)
