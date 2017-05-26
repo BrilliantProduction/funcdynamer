@@ -40,11 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activator\FactoryObject.cs" />
+    <Compile Include="Activator\FactoryObjectCreator.cs" />
+    <Compile Include="Activator\InstanceDelegate.cs" />
     <Compile Include="Collections\EmptyCollectionHelper.cs" />
     <Compile Include="Collections\OptionalCollection.cs" />
     <Compile Include="Collections\OptionalCollectionsExtentions.cs" />
     <Compile Include="Collections\OptionalCollectionWrapException.cs" />
     <Compile Include="Currying\CurryHelper.cs" />
+    <Compile Include="Activator\DynamicActivator.cs" />
     <Compile Include="Optional.cs" />
     <Compile Include="OptionalCastException.cs" />
     <Compile Include="TreeNode.cs" />
