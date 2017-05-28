@@ -45,6 +45,7 @@
     <Compile Include="Activator\FactoryObjectCreator.cs" />
     <Compile Include="Activator\InstanceDelegate.cs" />
     <Compile Include="Activator\TypeConstructor.cs" />
+    <Compile Include="Cacher.cs" />
     <Compile Include="Collections\EmptyCollectionHelper.cs" />
     <Compile Include="Collections\OptionalCollection.cs" />
     <Compile Include="Collections\OptionalCollectionsExtentions.cs" />
@@ -52,24 +53,34 @@
     <Compile Include="Currying\CurryHelper.cs" />
     <Compile Include="Activator\DynamicActivator.cs" />
     <Compile Include="DuckTyping\Ducker.cs" />
+    <Compile Include="Exceptions\InvalidArgumentException.cs" />
+    <Compile Include="Helpers\ImplicitTypeConversionChecker.cs" />
+    <Compile Include="Helpers\ThrowHelper.cs" />
     <Compile Include="Optional.cs" />
-    <Compile Include="OptionalCastException.cs" />
+    <Compile Include="Exceptions\OptionalCastException.cs" />
+    <Compile Include="Helpers\CastHelper.cs" />
+    <Compile Include="Proxying\Compability\ClassCompabilityChecker.cs" />
+    <Compile Include="Helpers\TypeConverterChecker.cs" />
     <Compile Include="Proxying\ConstructedType.cs" />
+    <Compile Include="Proxying\Compability\EnumCompabilityChecker.cs" />
     <Compile Include="Proxying\Proxy.cs" />
     <Compile Include="Proxying\EmitContext.cs" />
+    <Compile Include="Proxying\Compability\StructCompabilityChecker.cs" />
+    <Compile Include="Proxying\Compability\TypeCompabilityChecker.cs" />
+    <Compile Include="Helpers\ReflectionTypeExentions.cs" />
     <Compile Include="Proxying\TypeEmitter.cs" />
     <Compile Include="TreeNode.cs" />
     <Compile Include="UnsafeHandler\ExceptionTransformer.cs" />
     <Compile Include="UnsafeHandler\ExceptionHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnsafeHandler\InvalidTransformerException.cs" />
-    <Compile Include="Unwrap\KeyNotFoundInStorageException.cs" />
+    <Compile Include="Exceptions\InvalidTransformerException.cs" />
+    <Compile Include="Exceptions\KeyNotFoundInStorageException.cs" />
     <Compile Include="Unwrap\SafePerfomer.cs" />
     <Compile Include="Unwrap\PersistantStorage.cs" />
     <Compile Include="Unwrap\Scope.cs" />
-    <Compile Include="Unwrap\StorageValueIsNotApplicableForTargetTypeException.cs" />
+    <Compile Include="Exceptions\StorageValueIsNotApplicableForTargetTypeException.cs" />
     <Compile Include="Unwrap\UnwrapExperssion.cs" />
-    <Compile Include="Unwrap\ValueNotFoundException.cs" />
+    <Compile Include="Exceptions\ValueNotFoundException.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj">
