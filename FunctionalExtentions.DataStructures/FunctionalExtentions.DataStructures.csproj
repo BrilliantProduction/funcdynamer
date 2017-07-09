@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0989D485-D6AE-4049-912F-6CE2E83012E7}</ProjectGuid>
+    <ProjectGuid>{1977C8EF-0571-4955-98AA-C28C7DEBE746}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FunctionalExtentions.Abstract</RootNamespace>
-    <AssemblyName>FunctionalExtentions.Abstract</AssemblyName>
+    <RootNamespace>FunctionalExtentions.DataStructures</RootNamespace>
+    <AssemblyName>FunctionalExtentions.DataStructures</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,14 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExceptionTransformation\ITransformer.cs" />
-    <Compile Include="ICloneable.cs" />
-    <Compile Include="IOptional.cs" />
-    <Compile Include="OptionalCollections\IOptionalCollection.cs" />
-    <Compile Include="OptionalCollections\IOptionalCollectionInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ValueCollections\IStack.cs" />
-    <Compile Include="ValueCollections\IValueCollection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
