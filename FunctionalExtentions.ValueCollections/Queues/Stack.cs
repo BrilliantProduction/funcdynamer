@@ -5,33 +5,33 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FunctionalExtentions.ValueDataStructures
+namespace FunctionalExtentions.ValueCollections
 {
     public struct Stack<T> : IStack<T>, ICloneable<Stack<T>>
     {
-        public const int DefaultCapasity = 10;
+        public const int DefaultCapacity = 10;
         private const int DefaultGrowingRate = 9;
         private const double GrowingScaleLimit = 0.9;
         private const double GrowingScale = 0.5;
 
         private T[] _stackCollection;
         private int _count;
-        private int _capasity;
+        private int _capacity;
         private bool _isReadOnly;
 
-        public Stack(int capasity)
+        public Stack(int capacity)
         {
             _count = 0;
-            _capasity = capasity;
-            _stackCollection = new T[_capasity];
+            _capacity = capacity;
+            _stackCollection = new T[_capacity];
             _isReadOnly = false;
         }
 
         public Stack(IEnumerable<T> collection)
         {
             _count = collection.Count();
-            _capasity = DefaultCapasity + _count;
-            _stackCollection = new T[_capasity];
+            _capacity = DefaultCapacity + _count;
+            _stackCollection = new T[_capacity];
             _isReadOnly = false;
             int i = 0;
             foreach (var item in collection)
@@ -43,8 +43,8 @@ namespace FunctionalExtentions.ValueDataStructures
         public Stack(IEnumerable<T> collection, bool isReadOnly)
         {
             _count = collection.Count();
-            _capasity = DefaultCapasity + _count;
-            _stackCollection = new T[_capasity];
+            _capacity = DefaultCapacity + _count;
+            _stackCollection = new T[_capacity];
             _isReadOnly = isReadOnly;
             int i = 0;
             foreach (var item in collection)
@@ -71,7 +71,7 @@ namespace FunctionalExtentions.ValueDataStructures
         {
             if (!IsReadOnly)
             {
-                _stackCollection = new T[_capasity];
+                _stackCollection = new T[_capacity];
 
                 _count = 0;
             }
@@ -135,7 +135,7 @@ namespace FunctionalExtentions.ValueDataStructures
             {
                 if (_stackCollection[i].Equals(item))
                 {
-                    var newStack = new T[_capasity];
+                    var newStack = new T[_capacity];
 
                     Array.Copy(_stackCollection, 0, newStack, 0, i);
 
@@ -183,7 +183,7 @@ namespace FunctionalExtentions.ValueDataStructures
         {
             if (!IsReadOnly)
             {
-                if (CheckCapasity(1))
+                if (CheckCapacity(1))
                 {
                     Extend(1);
                 }
@@ -236,43 +236,43 @@ namespace FunctionalExtentions.ValueDataStructures
 
         #region Stack helpers
 
-        private bool CheckCapasity(int additionalPart)
+        private bool CheckCapacity(int additionalPart)
         {
             var newCount = Count + additionalPart;
-            var capasityGrowRate = _capasity * GrowingScaleLimit;
-            return capasityGrowRate < newCount;
+            var capacityGrowRate = _capacity * GrowingScaleLimit;
+            return capacityGrowRate < newCount;
         }
 
         private void Extend(int newElementsCount = 0)
         {
             var scalingPoint = GetScalingPoint(newElementsCount);
-            var newArray = new T[_capasity + scalingPoint];
+            var newArray = new T[_capacity + scalingPoint];
 
             if (_stackCollection != null && Count > 0)
                 Array.Copy(_stackCollection, newArray, _stackCollection.Length);
 
             _stackCollection = newArray;
-            _capasity = _stackCollection.Length;
+            _capacity = _stackCollection.Length;
         }
 
         private int GetScalingPoint(int newElementsCount)
         {
             int result;
 
-            if (_capasity == 0)
+            if (_capacity == 0)
             {
                 if (DefaultGrowingRate > newElementsCount)
                 {
-                    result = DefaultCapasity;
+                    result = DefaultCapacity;
                 }
                 else
                 {
-                    result = (int)Math.Round(_capasity * GrowingScale) + newElementsCount;
+                    result = (int)Math.Round(_capacity * GrowingScale);
                 }
             }
             else
             {
-                result = (int)Math.Round(_capasity * GrowingScale) + newElementsCount;
+                result = (int)Math.Round(_capacity * GrowingScale);
             }
 
             return result;
