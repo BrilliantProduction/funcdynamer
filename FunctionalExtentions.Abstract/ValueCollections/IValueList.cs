@@ -29,7 +29,7 @@ namespace FunctionalExtentions.Abstract.ValueCollections
 
         IValueList<T> FindAll(Predicate<T> match);
 
-        int FindIndex(int startIndex, int count, Predicate<T> macth);
+        int FindIndex(int startIndex, int count, Predicate<T> match);
 
         int FindIndex(int startIndex, Predicate<T> match);
 

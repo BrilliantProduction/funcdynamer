@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using FunctionalExtentions.Abstract;
 
 namespace FunctionalExtentions.ValueCollections
 {
-    public struct ArrayList<T> : IValueList<T>
+    public struct ArrayList<T> : IValueList<T>, ICloneable<ArrayList<T>>
     {
         public const int DefaultCapacity = 10;
         private const int DefaultGrowingRate = 9;
@@ -267,6 +268,11 @@ namespace FunctionalExtentions.ValueCollections
             }
         }
 
+        public ArrayList<T> Clone()
+        {
+            return new ArrayList<T>(this, _isReadOnly);
+        }
+
         public bool Exists(Predicate<T> match)
         {
             if (match == null)
@@ -291,52 +297,161 @@ namespace FunctionalExtentions.ValueCollections
 
         public T Find(Predicate<T> match)
         {
-            throw new NotImplementedException();
+            if (match == null)
+                throw new ArgumentNullException(nameof(match));
+
+            T result = default(T);
+
+            if (!IsEmpty())
+            {
+                foreach (var item in _list)
+                {
+                    if (match(item))
+                    {
+                        result = item;
+                        break;
+                    }
+                }
+            }
+
+            return result;
         }
 
         public IValueList<T> FindAll(Predicate<T> match)
         {
-            throw new NotImplementedException();
+            if (match == null)
+                throw new ArgumentNullException(nameof(match));
+
+            var result = new ArrayList<T>();
+
+            if (!IsEmpty())
+            {
+                foreach (var item in _list)
+                {
+                    if (match(item))
+                    {
+                        result.Add(item);
+                    }
+                }
+            }
+
+            return result;
         }
 
         public int FindIndex(Predicate<T> match)
         {
-            throw new NotImplementedException();
+            return FindIndex(0, Count, match);
         }
 
         public int FindIndex(int startIndex, Predicate<T> match)
         {
-            throw new NotImplementedException();
+            return FindIndex(startIndex, Count - startIndex, match);
         }
 
-        public int FindIndex(int startIndex, int count, Predicate<T> macth)
+        public int FindIndex(int startIndex, int count, Predicate<T> match)
         {
-            throw new NotImplementedException();
+            if (match == null)
+                throw new ArgumentNullException(nameof(match));
+
+            if (startIndex >= Count || startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (startIndex + count > Count)
+                throw new ArgumentOutOfRangeException(nameof(count), "Count elements for search is not valid range.");
+
+            int index = -1;
+
+            if (!IsEmpty())
+            {
+                for (int i = startIndex; i < startIndex + count; i++)
+                {
+                    if (match(_list[i]))
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+            }
+
+            return index;
         }
 
         public T FindLast(Predicate<T> match)
         {
-            throw new NotImplementedException();
+            if (match == null)
+                throw new ArgumentNullException(nameof(match));
+
+            var result = default(T);
+
+            if (!IsEmpty())
+            {
+                foreach (var item in _list)
+                {
+                    if (match(item))
+                    {
+                        result = item;
+                    }
+                }
+            }
+
+            return result;
         }
 
         public int FindLastIndex(Predicate<T> match)
         {
-            throw new NotImplementedException();
+            return FindLastIndex(Count - 1, Count, match);
         }
 
         public int FindLastIndex(int startIndex, Predicate<T> match)
         {
-            throw new NotImplementedException();
+            return FindLastIndex(startIndex, startIndex + 1, match);
         }
 
         public int FindLastIndex(int startIndex, int count, Predicate<T> match)
         {
-            throw new NotImplementedException();
+            if (match == null)
+                throw new ArgumentNullException(nameof(match));
+
+            if (startIndex >= Count || startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (startIndex - count + 1 < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), "Count elements for search is not valid range.");
+
+            int index = -1;
+
+            if (!IsEmpty())
+            {
+                for (int i = startIndex; i > startIndex - count; i--)
+                {
+                    if (match(_list[i]))
+                    {
+                        index = i;
+                    }
+                }
+            }
+
+            return index;
         }
 
         public void ForEach(Action<T> action)
         {
-            throw new NotImplementedException();
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
+
+            if (!IsEmpty())
+            {
+                foreach (var item in _list)
+                {
+                    action(item);
+                }
+            }
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -346,22 +461,64 @@ namespace FunctionalExtentions.ValueCollections
 
         public IValueList<T> GetRange(int index, int count)
         {
-            throw new NotImplementedException();
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (index + count > Count)
+                throw new ArgumentException("Range is not within actual list boundaries.");
+
+            var list = new ArrayList<T>(DefaultCapacity + count);
+
+            if (!IsEmpty())
+            {
+                for (int i = index; i < index + count; i++)
+                {
+                    list.Add(_list[i]);
+                }
+            }
+
+            return list;
         }
 
         public int IndexOf(T item)
         {
-            throw new NotImplementedException();
+            return IndexOf(item, 0, Count);
         }
 
         public int IndexOf(T item, int index)
         {
-            throw new NotImplementedException();
+            return IndexOf(item, index, Count - index);
         }
 
         public int IndexOf(T item, int index, int count)
         {
-            throw new NotImplementedException();
+            if (index > Count && index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (index + count > Count)
+                throw new ArgumentOutOfRangeException(nameof(count), "Search section is not a valid range within list.");
+
+            int result = -1;
+
+            if (!IsEmpty())
+            {
+                for (int i = index; i < index + count; i++)
+                {
+                    if (_list[i].Equals(item))
+                    {
+                        result = i;
+                        break;
+                    }
+                }
+            }
+
+            return result;
         }
 
         public void Insert(int index, T item)
@@ -411,7 +568,10 @@ namespace FunctionalExtentions.ValueCollections
 
         public void Reverse()
         {
-            throw new NotImplementedException();
+            if (!IsEmpty())
+            {
+                Array.Reverse(_list);
+            }
         }
 
         public void Reverse(int index, int count)
