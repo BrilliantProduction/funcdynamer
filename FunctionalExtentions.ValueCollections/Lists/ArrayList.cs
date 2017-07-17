@@ -95,7 +95,7 @@ namespace FunctionalExtentions.ValueCollections
         {
             if (!IsReadOnly)
             {
-                if (CheckCapacity(1))
+                if (CollectionArrayHelper.CheckCapacity(1, GetCollectionInfo()))
                 {
                     Extend(1);
                 }
@@ -116,7 +116,7 @@ namespace FunctionalExtentions.ValueCollections
             {
                 var insertedCount = collection.Count();
 
-                if (CheckCapacity(insertedCount))
+                if (CollectionArrayHelper.CheckCapacity(insertedCount, GetCollectionInfo()))
                 {
                     Extend(insertedCount);
                 }
@@ -447,8 +447,9 @@ namespace FunctionalExtentions.ValueCollections
 
             if (!IsEmpty())
             {
-                foreach (var item in _list)
+                for (int i = 0; i < Count; i++)
                 {
+                    var item = _list[i];
                     action(item);
                 }
             }
@@ -523,12 +524,36 @@ namespace FunctionalExtentions.ValueCollections
 
         public void Insert(int index, T item)
         {
-            throw new NotImplementedException();
+            if (index < 0 || index > Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            if (CollectionArrayHelper.CheckCapacity(1, GetCollectionInfo()))
+            {
+                Extend(1);
+            }
+
+            T temp = _list[index];
+            T temp2 = _list[index + 1];
+
+            for (int i = index + 1; i <= Count + 1; i++)
+            {
+                _list[i] = temp;
+                temp = temp2;
+                temp2 = _list[i + 1];
+            }
+
+            _list[index] = item;
+
+            _count++;
         }
 
         public void InsertRange(int index, IEnumerable<T> collection)
         {
-            throw new NotImplementedException();
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
+
+            if (index < 0 || index > Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
         }
 
         public int LastIndexOf(T item)
@@ -652,16 +677,16 @@ namespace FunctionalExtentions.ValueCollections
 
         #region Capacity helpers
 
-        private bool CheckCapacity(int additionalPart)
+        private ExtendCollectionInfo GetCollectionInfo()
         {
-            var newCount = Count + additionalPart;
-            var capacityGrowRate = _capacity * GrowingScaleLimit;
-            return capacityGrowRate < newCount;
+            return new ExtendCollectionInfo(Count, Capacity, DefaultCapacity,
+                DefaultGrowingRate, GrowingScale, GrowingScaleLimit
+            );
         }
 
         private void Extend(int newElementsCount = 0)
         {
-            var scalingPoint = GetScalingPoint(newElementsCount);
+            var scalingPoint = CollectionArrayHelper.GetScalingPoint(newElementsCount, GetCollectionInfo());
             var newArray = new T[_capacity + scalingPoint];
 
             if (_list != null && Count > 0)
@@ -680,29 +705,6 @@ namespace FunctionalExtentions.ValueCollections
 
             _list = newArray;
             _capacity = _list.Length;
-        }
-
-        private int GetScalingPoint(int newElementsCount)
-        {
-            int result;
-
-            if (_capacity == 0)
-            {
-                if (DefaultGrowingRate > newElementsCount)
-                {
-                    result = DefaultCapacity;
-                }
-                else
-                {
-                    result = (int)Math.Round(_capacity * GrowingScale);
-                }
-            }
-            else
-            {
-                result = (int)Math.Round(_capacity * GrowingScale);
-            }
-
-            return result;
         }
 
         #endregion Capacity helpers
