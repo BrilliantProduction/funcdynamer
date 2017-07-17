@@ -33,7 +33,8 @@ namespace FunctionalExtentions.ValueCollections
         public ArrayList(IEnumerable<T> collection, bool isReadOnly = false)
         {
             _count = collection.Count();
-            _capacity = DefaultCapacity + _count;
+            _capacity = CollectionArrayHelper.GetScalingPoint(_count,
+                new ExtendCollectionInfo(0, 0, DefaultCapacity, DefaultGrowingRate, GrowingScaleLimit, GrowingScale));
             _isReadOnly = isReadOnly;
 
             _list = new T[_capacity];
@@ -680,7 +681,7 @@ namespace FunctionalExtentions.ValueCollections
         private ExtendCollectionInfo GetCollectionInfo()
         {
             return new ExtendCollectionInfo(Count, Capacity, DefaultCapacity,
-                DefaultGrowingRate, GrowingScale, GrowingScaleLimit
+                DefaultGrowingRate, GrowingScaleLimit, GrowingScale
             );
         }
 

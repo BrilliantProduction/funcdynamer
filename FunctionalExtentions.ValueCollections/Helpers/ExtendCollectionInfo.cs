@@ -14,15 +14,15 @@
 
         public double GrowingScale { get; }
 
-        public ExtendCollectionInfo(int capacity, int count, int defCapacity,
-            int defGrowRate, double growScaleLimit, double growScale)
+        public ExtendCollectionInfo(int count, int capacity, int defaultCapacity,
+            int defaultGrowRate, double growingScaleLimit, double growingScale)
         {
             Capacity = capacity;
             Count = count;
-            DefaultCapacity = defCapacity;
-            DefaultGrowingRate = defGrowRate;
-            GrowingScale = growScale;
-            GrowingScaleLimit = growScaleLimit;
+            DefaultCapacity = defaultCapacity;
+            DefaultGrowingRate = defaultGrowRate;
+            GrowingScale = growingScale;
+            GrowingScaleLimit = growingScaleLimit;
         }
     }
 }

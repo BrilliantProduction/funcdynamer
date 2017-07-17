@@ -15,26 +15,24 @@ namespace FunctionalExtentions.ValueCollections
         {
             int result;
 
-            if (collectionInfo.Capacity == 0)
+            if (collectionInfo.Capacity == 0 && collectionInfo.DefaultGrowingRate > newElementsCount)
             {
-                if (collectionInfo.DefaultGrowingRate > newElementsCount)
-                {
-                    result = collectionInfo.DefaultCapacity;
-                }
-                else
-                {
-                    result = (int)Math.Round(collectionInfo.Capacity * collectionInfo.GrowingScale);
-                }
+                result = collectionInfo.DefaultCapacity;
             }
             else
             {
                 var tempResult = 0;
+
+                var multiplier = collectionInfo.Capacity > 0 ?
+                    collectionInfo.Capacity : collectionInfo.DefaultCapacity;
+
                 do
                 {
-                    result = tempResult + (int)Math.Round(collectionInfo.Capacity * collectionInfo.GrowingScale);
+                    result = tempResult + (int)Math.Round(multiplier * collectionInfo.GrowingScale);
                     tempResult = result;
                 }
-                while (collectionInfo.Capacity + result < collectionInfo.Capacity + newElementsCount);
+                while ((collectionInfo.Capacity + result) * collectionInfo.GrowingScaleLimit
+                < collectionInfo.Capacity + newElementsCount);
             }
 
             return result;
