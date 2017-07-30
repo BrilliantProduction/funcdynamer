@@ -3,28 +3,20 @@ using System;
 
 namespace FunctionalExtentions.Core
 {
-    public class Optional<Wrapped> : IOptional<Wrapped>
+    public struct Optional<Wrapped> : IOptional<Wrapped>
     {
         private WrappedObject _value;
 
-        private Optional()
+        public Optional(Wrapped value)
         {
-            _value = WrappedObject.CreateDefault();
-        }
-
-        private Optional(Wrapped value)
-        {
-            _value = WrappedObject.Create(value);
-        }
-
-        public static Optional<Wrapped> CreateOptional()
-        {
-            return new Optional<Wrapped>();
-        }
-
-        public static Optional<Wrapped> CreateOptional(Wrapped instance)
-        {
-            return new Optional<Wrapped>(instance);
+            if (value == null)
+            {
+                _value = WrappedObject.CreateDefault();
+            }
+            else
+            {
+                _value = WrappedObject.Create(value);
+            }
         }
 
         public bool HasValue
@@ -82,8 +74,7 @@ namespace FunctionalExtentions.Core
 
         public static implicit operator Optional<Wrapped>(Wrapped value)
         {
-            if (value != null) return CreateOptional(value);
-            return CreateOptional();
+            return new Optional<Wrapped>(value);
         }
 
         public static explicit operator Wrapped(Optional<Wrapped> value)

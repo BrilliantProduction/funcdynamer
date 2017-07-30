@@ -72,7 +72,7 @@ namespace FunctionalExtentions.Tests
         {
             //Arrange
             var optionalInts = new int[] { 1, 2, 3, 4 }.AsOptional();
-            IOptional<int>[] expected = new Optional<int>[] { 1, 2, 3, 4 };
+            var expected = new Optional<int>[] { 1, 2, 3, 4 };
 
             //Act
             var mapped = optionalInts.Map(x => x);
@@ -87,7 +87,7 @@ namespace FunctionalExtentions.Tests
         {
             //Arrange
             var optionalInts = new int[] { 1, 2, 3, 4 }.AsOptional();
-            IOptional<int>[] expected = new Optional<int>[] { 1, 2, 3, 4 };
+            var expected = new Optional<int>[] { 1, 2, 3, 4 };
 
             //Act
             var mapped = optionalInts.FlatMap(x => x);
@@ -102,14 +102,14 @@ namespace FunctionalExtentions.Tests
         {
             //Arrange
             var optionalInts = new int[] { 1, 2, 3, 4 };
-            IOptional<int>[] expected = new Optional<int>[] { 1, 2, 3, 4 };
+            var expected = new Optional<int>[] { 1, 2, 3, 4 };
 
             //Act
             var mapped = optionalInts.FlatMap(x => (Optional<int>)x);
 
             //Assert
             Assert.IsNotEmpty(mapped);
-            Assert.IsInstanceOf<IOptional<int>[]>(mapped);
+            Assert.IsInstanceOf<Optional<int>[]>(mapped);
         }
 
         [Test]
