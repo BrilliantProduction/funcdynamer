@@ -183,7 +183,7 @@ namespace FunctionalExtentions.ValueCollections
         {
             if (!IsReadOnly)
             {
-                if (CheckCapacity(1))
+                if (CollectionArrayHelper.CheckCapacity(1, GetCollectionInfo()))
                 {
                     Extend(1);
                 }
@@ -236,16 +236,16 @@ namespace FunctionalExtentions.ValueCollections
 
         #region Stack helpers
 
-        private bool CheckCapacity(int additionalPart)
+        private ExtendCollectionInfo GetCollectionInfo()
         {
-            var newCount = Count + additionalPart;
-            var capacityGrowRate = _capacity * GrowingScaleLimit;
-            return capacityGrowRate < newCount;
+            return new ExtendCollectionInfo(Count, _capacity, DefaultCapacity,
+                DefaultGrowingRate, GrowingScaleLimit, GrowingScale
+            );
         }
 
         private void Extend(int newElementsCount = 0)
         {
-            var scalingPoint = GetScalingPoint(newElementsCount);
+            var scalingPoint = CollectionArrayHelper.GetScalingPoint(newElementsCount, GetCollectionInfo());
             var newArray = new T[_capacity + scalingPoint];
 
             if (_stackCollection != null && Count > 0)
@@ -253,29 +253,6 @@ namespace FunctionalExtentions.ValueCollections
 
             _stackCollection = newArray;
             _capacity = _stackCollection.Length;
-        }
-
-        private int GetScalingPoint(int newElementsCount)
-        {
-            int result;
-
-            if (_capacity == 0)
-            {
-                if (DefaultGrowingRate > newElementsCount)
-                {
-                    result = DefaultCapacity;
-                }
-                else
-                {
-                    result = (int)Math.Round(_capacity * GrowingScale);
-                }
-            }
-            else
-            {
-                result = (int)Math.Round(_capacity * GrowingScale);
-            }
-
-            return result;
         }
 
         #endregion Stack helpers
