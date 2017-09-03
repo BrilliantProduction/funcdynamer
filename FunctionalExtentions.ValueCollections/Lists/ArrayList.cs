@@ -141,17 +141,51 @@ namespace FunctionalExtentions.ValueCollections
 
         public int BinarySearch(T item)
         {
-            throw new NotImplementedException();
+            return BinarySearch(0, Count, item, null);
         }
 
         public int BinarySearch(T item, IComparer<T> comparer)
         {
-            throw new NotImplementedException();
+            return BinarySearch(0, Count, item, comparer);
         }
 
         public int BinarySearch(int index, int count, T item, IComparer<T> comparer)
         {
-            throw new NotImplementedException();
+            if (index < 0 || index >= Count)
+                throw new ArgumentOutOfRangeException(nameof(index), "Index is not in valid range for current list.");
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), "Count is not in valid range for current list.");
+
+            if (index + count > Count)
+                throw new ArgumentException("Index with count is greater than elements count.");
+
+            int low = index;
+
+            int high = index + count - 1;
+
+            if (comparer == null)
+                comparer = Comparer<T>.Default;
+
+            while (low <= high)
+            {
+                int middle = low + ((high - low) >> 1);
+
+                int comparison = comparer.Compare(_list[middle], item);
+
+                if (comparison == 0) return middle;
+
+                if (comparison < 0)
+                {
+                    low = middle + 1;
+                }
+                else
+                {
+                    high = middle - 1;
+                }
+            }
+
+            return ~low;
         }
 
         public void Clear()
