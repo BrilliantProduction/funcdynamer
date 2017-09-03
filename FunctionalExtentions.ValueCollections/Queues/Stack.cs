@@ -147,6 +147,8 @@ namespace FunctionalExtentions.ValueCollections
                     _count--;
 
                     result = true;
+
+                    break;
                 }
             }
 

@@ -172,7 +172,7 @@ namespace FunctionalExtentions.ValueCollections
         {
             bool result = false;
 
-            if (IsEmpty())
+            if (!IsEmpty())
             {
                 foreach (var element in _list)
                 {
@@ -281,7 +281,7 @@ namespace FunctionalExtentions.ValueCollections
 
             bool result = false;
 
-            if (IsEmpty())
+            if (!IsEmpty())
             {
                 foreach (var element in _list)
                 {
@@ -497,7 +497,7 @@ namespace FunctionalExtentions.ValueCollections
 
         public int IndexOf(T item, int index, int count)
         {
-            if (index > Count && index < 0)
+            if (index >= Count && index < 0)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
             if (count < 0)
@@ -525,7 +525,7 @@ namespace FunctionalExtentions.ValueCollections
 
         public void Insert(int index, T item)
         {
-            if (index < 0 || index > Count)
+            if (index < 0 || index >= Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
             if (CollectionArrayHelper.CheckCapacity(1, GetCollectionInfo()))
@@ -553,56 +553,181 @@ namespace FunctionalExtentions.ValueCollections
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
-            if (index < 0 || index > Count)
+            if (index < 0 || index >= Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
+
+            if (!IsReadOnly)
+            {
+                var copy = new T[Count - index];
+
+                var inserted = collection.ToList();
+
+                Array.Copy(_list, index, copy, 0, Count - index);
+
+                var insertedCount = inserted.Count;
+
+                if (CollectionArrayHelper.CheckCapacity(insertedCount, GetCollectionInfo()))
+                {
+                    Extend(insertedCount);
+                }
+
+                for (int i = index; i < index + insertedCount; i++)
+                {
+                    _list[i] = inserted[i - index];
+                }
+
+                for (int i = index + insertedCount; i < Count + insertedCount; i++)
+                {
+                    _list[i] = copy[i - (index + insertedCount)];
+                }
+                _count += insertedCount;
+            }
+            else
+            {
+                throw new InvalidOperationException("Cannot insert elements to read-only list.");
+            }
         }
 
         public int LastIndexOf(T item)
         {
-            throw new NotImplementedException();
+            return LastIndexOf(item, Count - 1, Count);
         }
 
         public int LastIndexOf(T item, int index)
         {
-            throw new NotImplementedException();
+            return LastIndexOf(item, index, index + 1);
         }
 
         public int LastIndexOf(T item, int index, int count)
         {
-            throw new NotImplementedException();
+            if (index < 0 || index >= Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (index - count + 1 < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), "Search section is not valid range within list.");
+
+            int result = -1;
+
+            if (!IsEmpty())
+            {
+                for (int i = index; i > index - count; i--)
+                {
+                    if (EqualityComparer<T>.Default.Equals(item, _list[i]))
+                    {
+                        result = i;
+                    }
+                }
+            }
+
+            return result;
         }
 
         public bool Remove(T item)
         {
-            throw new NotImplementedException();
+            if (IsReadOnly)
+                throw new InvalidOperationException("Cannot remove from read-only collection");
+
+            bool result = false;
+
+            for (int i = 0; i < Count; i++)
+            {
+                bool equal = (_list[i] is IEquatable<T>) ? (_list[i] as IEquatable<T>).Equals(item) : _list[i].Equals(item);
+
+                if (equal)
+                {
+                    RemoveAt(i);
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
 
         public void RemoveAll(Predicate<T> match)
         {
-            throw new NotImplementedException();
+            if (IsReadOnly)
+                throw new InvalidOperationException("Cannot remove from read-only collection");
+
+            if (match == null)
+                throw new ArgumentNullException(nameof(match));
+
+            for (int i = 0; i < Count; i++)
+            {
+                if (match(_list[i]))
+                {
+                    RemoveAt(i);
+                }
+            }
         }
 
         public void RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            if (IsReadOnly)
+                throw new InvalidOperationException("Cannot remove from read-only collection");
+
+            if (index < 0 || index >= Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            for (int i = index; i < Count - 1; i++)
+            {
+                _list[i] = _list[i + 1];
+            }
+
+            _count--;
         }
 
         public void RemoveRange(int index, int count)
         {
-            throw new NotImplementedException();
+            if (IsReadOnly)
+                throw new InvalidOperationException("Cannot remove from read-only collection");
+
+            if (index < 0 || index >= Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (index + count > Count)
+                throw new ArgumentException("Index and count are not in valid range within list.");
+
+            var others = Count - (index + count);
+
+            for (int i = index; i < index + count; i++)
+            {
+                if (i < index + others)
+                {
+                    _list[i] = _list[i + count];
+                    _list[i + count] = default(T);
+                }
+                else _list[i] = default(T);
+            }
+
+            _count -= count;
         }
 
         public void Reverse()
         {
             if (!IsEmpty())
             {
-                Array.Reverse(_list);
+                Array.Reverse(_list, 0, Count);
             }
         }
 
         public void Reverse(int index, int count)
         {
-            throw new NotImplementedException();
+            if (index < 0 || index >= Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (index + count > Count)
+                throw new ArgumentException("Index and count are not in valid range within list.");
+
+            Array.Reverse(_list, index, count);
         }
 
         #region Sort
@@ -649,13 +774,14 @@ namespace FunctionalExtentions.ValueCollections
                 newArray[i] = _list[i];
             }
             _list = newArray;
+            Capacity = Count;
         }
 
         public bool TrueForAll(Predicate<T> match)
         {
             bool result = false;
 
-            if (IsEmpty())
+            if (!IsEmpty())
             {
                 result = true;
                 foreach (var item in _list)
@@ -690,7 +816,7 @@ namespace FunctionalExtentions.ValueCollections
             var scalingPoint = CollectionArrayHelper.GetScalingPoint(newElementsCount, GetCollectionInfo());
             var newArray = new T[_capacity + scalingPoint];
 
-            if (_list != null && Count > 0)
+            if (!IsEmpty())
                 Array.Copy(_list, newArray, _list.Length);
 
             _list = newArray;
@@ -701,7 +827,7 @@ namespace FunctionalExtentions.ValueCollections
         {
             var newArray = new T[capacity];
 
-            if (_list != null && Count > 0)
+            if (!IsEmpty())
                 Array.Copy(_list, newArray, _list.Length);
 
             _list = newArray;
