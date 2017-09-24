@@ -10,7 +10,7 @@ namespace FunctionalExtentions.Tests
         public void OptionalCreateDefaultValueThrowsOptionalCastException()
         {
             //Arrange
-            Optional<int> opt = Optional<int>.CreateOptional();
+            Optional<int> opt = new Optional<int>();
 
             //Act & Assert
             Assert.Throws<OptionalCastException>(() => { var a = opt.Value; });

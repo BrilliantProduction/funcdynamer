@@ -3,7 +3,6 @@ using FunctionalExtentions.Abstract.OptionalCollections;
 using FunctionalExtentions.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace FunctionalExtentions.Collections
 {
@@ -27,13 +26,18 @@ namespace FunctionalExtentions.Collections
             {
                 throw new OptionalCollectionWrapException();
             }
-            var optionalCollection = PerformAction<T, IOptional<T>>(collection, (x) => Optional<T>.CreateOptional(x));
+            var optionalCollection = PerformAction<T, IOptional<T>>(collection, (x) => new Optional<T>(x));
             return new OptionalCollection<T>(optionalCollection);
         }
 
         public static ICollection<TResult> FlatMap<T, TResult>(this ICollection<IOptional<T>> collection, Func<T, TResult> map)
         {
-            return PerformAction<IOptional<T>, TResult>(collection, (x) => map(x.Value), (x) => x != null && x.HasValue);
+            return PerformAction(collection, (x) => map(x.Value), (x) => x != null && x.HasValue);
+        }
+
+        public static ICollection<TResult> FlatMap<T, TResult>(this ICollection<Optional<T>> collection, Func<T, TResult> map)
+        {
+            return PerformAction(collection, (x) => map(x.Value), (x) => x.HasValue);
         }
 
         public static ICollection<TResult> FlatMap<T, TResult>(this IOptionalCollection<T> collection, Func<IOptional<T>, TResult> map)
@@ -43,12 +47,12 @@ namespace FunctionalExtentions.Collections
 
         public static ICollection<TResult> FlatMap<T, TResult>(this ICollection<T> collection, Func<T, TResult> map)
         {
-            return PerformAction<T, TResult>(collection, map);
+            return PerformAction(collection, map);
         }
 
         public static ICollection<TResult> Map<T, TResult>(this ICollection<T> collection, Func<T, TResult> map)
         {
-            return PerformAction<T, TResult>(collection, map);
+            return PerformAction(collection, map);
         }
 
         public static TResult Reduce<T, TResult>(this ICollection<T> collection, TResult defaultValue, Func<TResult, T, TResult> combine)
@@ -62,21 +66,18 @@ namespace FunctionalExtentions.Collections
 
         public static ICollection<T> Filter<T>(this ICollection<T> collection, Predicate<T> filter)
         {
-            return PerformAction<T, T>(collection, x => x, filter);
+            return PerformAction(collection, x => x, filter);
         }
 
-        private static ICollection<TResult> PerformAction<T, TResult>(ICollection<T> collection, Func<T, TResult> map, Predicate<T> condition = null)
+        private static ICollection<TResult> PerformAction<T, TResult>(ICollection<T> collection,
+            Func<T, TResult> map,
+            Predicate<T> condition = null)
         {
-            Stopwatch timer = Stopwatch.StartNew();
             var collectionType = collection.GetType();
             CollectionFlags isOptional = DetectOptionalFlags(collectionType, collection);
-            timer.Stop();
-            Console.WriteLine($"{nameof(DetectOptionalFlags)} taked {timer.ElapsedMilliseconds} ms");
-            timer.Restart();
+
             ICollection<TResult> result = CreateEmptyCollection<TResult>(collectionType, isOptional);
-            timer.Stop();
-            Console.WriteLine($"{nameof(CreateEmptyCollection)} taked {timer.ElapsedMilliseconds} ms");
-            timer.Restart();
+
             foreach (var item in collection)
             {
                 if (condition == null || condition(item))
@@ -84,13 +85,8 @@ namespace FunctionalExtentions.Collections
                     result.Add(map(item));
                 }
             }
-            timer.Stop();
-            Console.WriteLine($"Work cycle taked {timer.ElapsedMilliseconds} ms");
-            timer.Restart();
 
             result = ConvertBackIfArray(isOptional, result);
-            timer.Stop();
-            Console.WriteLine($"{nameof(ConvertBackIfArray)} taked {timer.ElapsedMilliseconds} ms");
 
             return result;
         }

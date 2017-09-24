@@ -30,7 +30,7 @@ namespace FunctionalExtentions.Collections
 
         public void Add(T item)
         {
-            Add(Optional<T>.CreateOptional(item));
+            Add(new Optional<T>(item));
         }
 
         public void Add(IOptional<T> item)

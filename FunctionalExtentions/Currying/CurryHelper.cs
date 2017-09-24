@@ -38,7 +38,7 @@ namespace FunctionalExtentions.Core.Currying
                     return creator(param.Value);
                 }
             }
-            return Optional<R>.CreateOptional();
+            return new Optional<R>();
         }
     }
 }
