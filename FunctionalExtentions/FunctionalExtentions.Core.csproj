@@ -54,13 +54,11 @@
     <Compile Include="Activator\DynamicActivator.cs" />
     <Compile Include="DuckTyping\Ducker.cs" />
     <Compile Include="Exceptions\InvalidArgumentException.cs" />
-    <Compile Include="Helpers\ImplicitTypeConversionChecker.cs" />
     <Compile Include="Helpers\ThrowHelper.cs" />
     <Compile Include="Optional.cs" />
     <Compile Include="Exceptions\OptionalCastException.cs" />
     <Compile Include="Helpers\CastHelper.cs" />
     <Compile Include="Proxying\Compability\ClassCompabilityChecker.cs" />
-    <Compile Include="Helpers\TypeConverterChecker.cs" />
     <Compile Include="Proxying\ConstructedType.cs" />
     <Compile Include="Proxying\Compability\EnumCompabilityChecker.cs" />
     <Compile Include="Proxying\Proxy.cs" />

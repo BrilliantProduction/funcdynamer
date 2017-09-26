@@ -8,6 +8,8 @@ namespace FunctionalExtentions
     public static class CastHelper
     {
         private const int MaxCacheSize = 50;
+        private const string OpExplicit = "op_Explicit";
+        private const string OpImplicit = "op_Implicit";
 
         private static readonly Cacher<KeyValuePair<Type, Type>, bool> _expricitCastCache =
             new Cacher<KeyValuePair<Type, Type>, bool>(MaxCacheSize);
@@ -17,6 +19,7 @@ namespace FunctionalExtentions
 
         private const BindingFlags conversionFlags = BindingFlags.Public |
             BindingFlags.Static |
+            BindingFlags.InvokeMethod |
             BindingFlags.FlattenHierarchy;
 
         public static bool CanExplicitCast(Type typeFromCast, Type typeCastTo)
@@ -39,101 +42,43 @@ namespace FunctionalExtentions
             var underlyingTo = Nullable.GetUnderlyingType(typeCastTo);
             if (underlyingFrom != null || underlyingTo != null)
             {
-                return (underlyingFrom ?? typeFromCast).IsCastableTo(underlyingTo ?? typeCastTo);
+                return CanExplicitCast(underlyingFrom ?? typeFromCast, underlyingTo ?? typeCastTo);
             }
 
-            bool result;
-
-            if (typeFromCast.IsValueType)
-            {
-                result = CheckExplicitCast(typeFromCast, typeCastTo);
-            }
-            else
-            {
-                result = CanExplicitCastNonValueType(typeFromCast, typeCastTo);
-            }
+            bool result = typeFromCast.IsValueType ? CheckCast(typeFromCast, typeCastTo, OpExplicit)
+                : CanExplicitCastReferenceType(typeFromCast, typeCastTo);
 
             _expricitCastCache[key] = result;
             return result;
         }
 
-        private static bool CanExplicitCastNonValueType(Type typeFromCast, Type typeCastTo)
+        private static bool CanExplicitCastReferenceType(Type typeFromCast, Type typeCastTo)
         {
-            bool typeFromCanImplementTypeToInterface = typeCastTo.IsInterface && !typeFromCast.IsSealed;
-            bool typeToCanImplementTypeFromInterface = typeFromCast.IsInterface && !typeCastTo.IsSealed;
+            // NAIL: remove all dummy and useless code
+            bool result = false;
 
-            if (typeFromCanImplementTypeToInterface || typeToCanImplementTypeFromInterface)
+            if (typeFromCast.IsArray || typeCastTo.IsArray)
             {
-                return true;
+                result = CheckArrayConvertion(typeFromCast, typeCastTo);
             }
-
-            bool typeFromIsArrayOfReferenceTypes = typeFromCast.IsArray &&
-                !typeFromCast.GetElementType().IsValueType;
-
-            bool typeToIsArrayOfReferenceTypes = typeCastTo.IsArray && !typeCastTo.GetElementType().IsValueType;
-
-            Type arrayType = null;
-
-            if (typeFromIsArrayOfReferenceTypes)
+            else
             {
-                arrayType = typeFromCast;
-            }
-            else if (typeToIsArrayOfReferenceTypes)
-            {
-                arrayType = typeCastTo;
-            }
+                var operators = GetAllOperators(typeFromCast, OpImplicit, OpExplicit)
+                .Concat(GetAllOperators(typeCastTo, OpImplicit, OpExplicit));
 
-            if (arrayType != null)
-            {
-                bool typeFromIsGenericInterface = typeFromCast.IsInterface &&
-                    typeFromCast.IsGenericType;
-
-                bool typeToIsGenericInterface = typeCastTo.IsInterface && typeCastTo.IsGenericType;
-
-                Type genericInterfaceType = null;
-
-                if (typeFromIsGenericInterface)
+                if (typeCastTo.IsPrimitive && typeof(IConvertible).IsAssignableFrom(typeCastTo))
                 {
-                    genericInterfaceType = typeFromCast;
+                    // as mentioned above, primitive convertible types (i. e. not IntPtr) get special
+                    // treatment in the sense that if you can convert from Foo => int, you can convert
+                    // from Foo => double as well
+                    result = operators.Any(op => CanExplicitCast(op.ReturnType, typeCastTo));
                 }
-                else if (typeToIsGenericInterface)
+                else
                 {
-                    genericInterfaceType = typeCastTo;
-                }
-
-                if (genericInterfaceType != null)
-                {
-                    return arrayType.GetInterfaces()
-                        .Any(i => i.IsGenericType
-                            && i.GetGenericTypeDefinition() == genericInterfaceType.GetGenericTypeDefinition()
-                            && i.GetGenericArguments().Zip(typeCastTo.GetGenericArguments(),
-                            (ia, ta) => ta.IsAssignableFrom(ia) || ia.IsAssignableFrom(ta)).All(b => b));
+                    result = operators.Any(op => op.ReturnType == typeCastTo);
                 }
             }
-
-            var conversionMethods = typeFromCast.GetMethods(conversionFlags)
-                .Concat(typeCastTo.GetMethods(conversionFlags))
-                .Where(m => (m.Name == "op_Explicit" || m.Name == "op_Implicit")
-                    && m.Attributes.HasFlag(MethodAttributes.SpecialName)
-                    && m.GetParameters().Length == 1
-                    && (
-                        // the from argument of the conversion function can be an indirect match to from in
-                        // either direction. For example, if we have A : B and Foo defines a conversion from B => Foo,
-                        // then C# allows A to be cast to Foo
-                        m.GetParameters()[0].ParameterType.IsAssignableFrom(typeFromCast)
-                        || typeFromCast.IsAssignableFrom(m.GetParameters()[0].ParameterType)
-                    )
-                );
-
-            if (typeCastTo.IsPrimitive && typeof(IConvertible).IsAssignableFrom(typeCastTo))
-            {
-                // as mentioned above, primitive convertible types (i. e. not IntPtr) get special
-                // treatment in the sense that if you can convert from Foo => int, you can convert
-                // from Foo => double as well
-                return conversionMethods.Any(m => m.ReturnType.IsCastableTo(typeCastTo));
-            }
-
-            return conversionMethods.Any(m => m.ReturnType == typeCastTo);
+            return result;
         }
 
         public static bool CanImplicitCast(Type from, Type to)
@@ -151,31 +96,70 @@ namespace FunctionalExtentions
                 return cachedValue;
             }
 
-            bool result = CheckImplicitCast(from, to);
+            bool result = CheckCast(from, to, OpImplicit);
             _implicitCastCache[key] = result;
             return result;
         }
 
-        private static bool CheckImplicitCast(Type typeCastFrom, Type typeCastTo)
+        private static bool CheckArrayConvertion(Type typeFromCast, Type typeCastTo)
         {
-            var converterType = typeof(ImplicitTypeConversionChecker<,>);
-            converterType = converterType.MakeGenericType(typeCastFrom, typeCastTo);
+            Type arrayType = typeFromCast.IsArray && !typeFromCast.GetElementType().IsValueType ?
+                typeFromCast : null;
 
-            var instance = DynamicActivator.MakeObject(converterType);
-            return (bool)converterType.GetProperty("CanConvert")
-                .GetGetMethod()
-                .Invoke(instance, null);
+            if (arrayType == null)
+            {
+                arrayType = typeCastTo.IsArray && !typeCastTo.GetElementType().IsValueType ?
+                    typeCastTo : null;
+            }
+
+            if (arrayType != null)
+            {
+                Type genericInterfaceType = typeFromCast.IsInterface && typeFromCast.IsGenericType ?
+                    typeFromCast : null;
+
+                if (genericInterfaceType == null)
+                {
+                    genericInterfaceType = typeCastTo.IsInterface && typeCastTo.IsGenericType ?
+                        typeCastTo : null;
+                }
+
+                if (genericInterfaceType != null)
+                {
+                    return arrayType.GetInterfaces()
+                        .Any(i => i.IsGenericType
+                            && i.GetGenericTypeDefinition() == genericInterfaceType.GetGenericTypeDefinition()
+                            && i.GetGenericArguments().Zip(typeCastTo.GetGenericArguments(),
+                            (ia, ta) => ta.IsAssignableFrom(ia) || ia.IsAssignableFrom(ta)).All(b => b));
+                }
+            }
+            return false;
         }
 
-        private static bool CheckExplicitCast(Type typeCastFrom, Type typeCastTo)
+        private static bool CheckCast(Type typeCastFrom, Type typeCastTo, string castOperatorName)
         {
-            var converterType = typeof(TypeConverterChecker<,>);
-            converterType = converterType.MakeGenericType(typeCastFrom, typeCastTo);
+            var operators = GetOperators(typeCastTo, castOperatorName).Concat(GetOperators(typeCastFrom, castOperatorName));
+            var op = operators.FirstOrDefault(x => x.ReturnType == typeCastTo
+                                && x.GetParameters().SingleOrDefault(y => y.ParameterType.IsAssignableFrom(typeCastFrom)
+                        || typeCastFrom.IsAssignableFrom(y.ParameterType)) != null);
+            return op != null;
+        }
 
-            var instance = DynamicActivator.MakeObject(converterType);
-            return (bool)converterType.GetProperty("CanConvert")
-                .GetGetMethod()
-                .Invoke(instance, null);
+        private static IEnumerable<MethodInfo> GetOperators(Type type, string operatorName)
+        {
+            var methods = type.GetMembers(conversionFlags);
+            var operators = methods.OfType<MethodInfo>()
+                .Where(x => x.Name.StartsWith(operatorName, StringComparison.InvariantCulture)
+                            && x.Attributes.HasFlag(MethodAttributes.SpecialName));
+            return operators;
+        }
+
+        private static IEnumerable<MethodInfo> GetAllOperators(Type type, params string[] operatorNames)
+        {
+            var methods = type.GetMembers(conversionFlags);
+            var operators = methods.OfType<MethodInfo>()
+                .Where(x => operatorNames.Contains(x.Name)
+                            && x.Attributes.HasFlag(MethodAttributes.SpecialName));
+            return operators;
         }
     }
 }
