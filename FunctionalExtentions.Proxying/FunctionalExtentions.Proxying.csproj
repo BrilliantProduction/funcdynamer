@@ -40,13 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compability\ICompabilityComparer.cs" />
-    <Compile Include="Compability\TypeCompabilityComparer.cs" />
+    <Compile Include="Compability\Comparers\CompabilityComparerBase.cs" />
+    <Compile Include="Compability\Comparers\ICompabilityComparer.cs" />
+    <Compile Include="Compability\Comparers\GeneralCompabilityComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Compability\ClassCompabilityChecker.cs" />
-    <Compile Include="Compability\EnumCompabilityChecker.cs" />
-    <Compile Include="Compability\StructCompabilityChecker.cs" />
-    <Compile Include="Compability\TypeCompabilityChecker.cs" />
+    <Compile Include="Compability\Checkers\ClassCompabilityChecker.cs" />
+    <Compile Include="Compability\Checkers\EnumCompabilityChecker.cs" />
+    <Compile Include="Compability\Checkers\StructCompabilityChecker.cs" />
+    <Compile Include="Compability\Checkers\TypeCompabilityChecker.cs" />
     <Compile Include="ConstructedType.cs" />
     <Compile Include="EmitContext.cs" />
     <Compile Include="Proxy.cs" />
