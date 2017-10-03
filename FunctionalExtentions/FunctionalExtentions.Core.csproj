@@ -58,15 +58,7 @@
     <Compile Include="Optional.cs" />
     <Compile Include="Exceptions\OptionalCastException.cs" />
     <Compile Include="Helpers\CastHelper.cs" />
-    <Compile Include="Proxying\Compability\ClassCompabilityChecker.cs" />
-    <Compile Include="Proxying\ConstructedType.cs" />
-    <Compile Include="Proxying\Compability\EnumCompabilityChecker.cs" />
-    <Compile Include="Proxying\Proxy.cs" />
-    <Compile Include="Proxying\EmitContext.cs" />
-    <Compile Include="Proxying\Compability\StructCompabilityChecker.cs" />
-    <Compile Include="Proxying\Compability\TypeCompabilityChecker.cs" />
     <Compile Include="Helpers\ReflectionTypeExentions.cs" />
-    <Compile Include="Proxying\TypeEmitter.cs" />
     <Compile Include="TreeNode.cs" />
     <Compile Include="UnsafeHandler\ExceptionTransformer.cs" />
     <Compile Include="UnsafeHandler\ExceptionHelper.cs" />
