@@ -47,6 +47,11 @@ namespace FunctionalExtentions
             return null;
         }
 
+        public static bool IsOverride(this MethodInfo method)
+        {
+            return method.GetBaseDefinition().DeclaringType != method.DeclaringType;
+        }
+
         public static bool CanBeNull(this Type type)
         {
             ThrowHelper.ThrowIfNull(type, nameof(type));

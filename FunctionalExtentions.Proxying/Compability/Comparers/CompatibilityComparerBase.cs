@@ -1,8 +1,9 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace FunctionalExtentions.Proxying.Compability
 {
-    public abstract class CompabilityComparerBase : ICompabilityComparer
+    public abstract class CompatibilityComparerBase : ICompatibilityComparer
     {
         protected const BindingFlags All =
             BindingFlags.Public |

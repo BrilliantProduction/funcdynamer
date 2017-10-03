@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunctionalExtentions
+namespace FunctionalExtentions.Proxying.Enums
 {
     public enum ConstructedType : byte
     {

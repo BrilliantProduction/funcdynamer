@@ -2,7 +2,7 @@
 
 namespace FunctionalExtentions.Proxying.Compability
 {
-    public interface ICompabilityComparer
+    public interface ICompatibilityComparer
     {
         MemberTypes TargetMemberType { get; }
 
