@@ -44,6 +44,7 @@
     <Compile Include="Compability\Comparers\FieldCompatibilityComparer.cs" />
     <Compile Include="Compability\Comparers\ICompatibilityComparer.cs" />
     <Compile Include="Compability\Comparers\GeneralCompatibilityComparer.cs" />
+    <Compile Include="Compability\Comparers\MethodCompatibilityComparer.cs" />
     <Compile Include="Compability\Comparers\PropertyCompatibilityComparer.cs" />
     <Compile Include="Enums\Modifiers.cs" />
     <Compile Include="Enums\PropertyAccessors.cs" />
