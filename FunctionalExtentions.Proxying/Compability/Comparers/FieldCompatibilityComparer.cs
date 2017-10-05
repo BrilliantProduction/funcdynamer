@@ -23,7 +23,7 @@ namespace FunctionalExtentions.Proxying.Compability
             if (!firstField.Name.Equals(secondField.Name))
                 return false;
 
-            if (!(firstField.FieldType == secondField.FieldType) &&
+            if (firstField.FieldType != secondField.FieldType &&
                 !secondField.FieldType.IsAssignableFrom(firstField.FieldType) &&
                 !firstField.FieldType.IsImplicitlyCastableTo(secondField.FieldType))
                 return false;

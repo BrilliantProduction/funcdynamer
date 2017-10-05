@@ -1,10 +1,6 @@
 ﻿using FunctionalExtentions.Proxying.Enums;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FunctionalExtentions.Proxying.Compability
 {
@@ -77,7 +73,7 @@ namespace FunctionalExtentions.Proxying.Compability
             for (int i = 0; i < length; i++)
             {
                 ParameterInfo firstParameter = firstMethodParameters[i];
-                ParameterInfo secondParameter = secondMethodParameters[i];
+                ParameterInfo secondParameter = secondMethodParameters.FirstOrDefault(x => x.Position == firstParameter.Position);//secondMethodParameters[i];
 
                 if (!AreParametersCompatible(firstParameter, secondParameter))
                     return false;
@@ -92,10 +88,7 @@ namespace FunctionalExtentions.Proxying.Compability
                 firstParameter != null && secondParameter == null)
                 return false;
 
-            if (!firstParameter.Name.Equals(secondParameter.Name))
-                return false;
-
-            if (!(firstParameter.ParameterType == secondParameter.ParameterType) &&
+            if (firstParameter.ParameterType != secondParameter.ParameterType &&
                 !secondParameter.ParameterType.IsAssignableFrom(firstParameter.ParameterType) &&
                 !firstParameter.ParameterType.IsImplicitlyCastableTo(secondParameter.ParameterType))
                 return false;

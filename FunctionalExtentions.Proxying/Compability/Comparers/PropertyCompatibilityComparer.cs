@@ -18,7 +18,7 @@ namespace FunctionalExtentions.Proxying.Compability
             if (!firstProperty.Name.Equals(secondProperty.Name))
                 return false;
 
-            if (!(firstProperty.PropertyType == secondProperty.PropertyType) &&
+            if (firstProperty.PropertyType != secondProperty.PropertyType &&
                 !secondProperty.PropertyType.IsAssignableFrom(firstProperty.PropertyType) &&
                 !firstProperty.PropertyType.IsImplicitlyCastableTo(secondProperty.PropertyType))
                 return false;
