@@ -84,7 +84,16 @@ namespace FunctionalExtentions.Core
 
         public T Cast<T>()
         {
-            return _value.TryGetValueOrNull<T>();
+            object value = _value.Value;
+            if (_value.HasValue)
+            {
+                Type valueType = value.GetType();
+
+                //TODO : perform recursive search and optional cast call
+                return (T)value;
+            }
+            else
+                throw new OptionalCastException(nameof(T), "Optional has not value and cannot be casted to wrapped type.");
         }
 
         private void CreateDefaultValueIfNull()
@@ -121,6 +130,8 @@ namespace FunctionalExtentions.Core
                 wrapped._hasValue = false;
                 return wrapped;
             }
+
+            public object Value => _value;
 
             public T TryGetValueOrNull<T>()
             {
