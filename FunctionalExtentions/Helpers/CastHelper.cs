@@ -101,6 +101,14 @@ namespace FunctionalExtentions
             return result;
         }
 
+        public static MethodInfo GetImplicitOperator(Type typeCastFrom, Type typeCastTo)
+        {
+            var operators = GetOperators(typeCastTo, OpImplicit).Concat(GetOperators(typeCastFrom, OpImplicit));
+            return operators.FirstOrDefault(x => x.ReturnType == typeCastTo
+                                && x.GetParameters().SingleOrDefault(y => y.ParameterType.IsAssignableFrom(typeCastFrom)
+                        || typeCastFrom.IsAssignableFrom(y.ParameterType)) != null);
+        }
+
         private static bool CheckArrayConvertion(Type typeFromCast, Type typeCastTo)
         {
             Type arrayType = typeFromCast.IsArray && !typeFromCast.GetElementType().IsValueType ?

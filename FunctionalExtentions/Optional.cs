@@ -1,8 +1,81 @@
 ﻿using FunctionalExtentions.Abstract;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace FunctionalExtentions.Core
 {
+    public static class Optional
+    {
+        public static Optional<T> Null<T>() => new Optional<T>();
+
+        public static Optional<T> From<T>(object value)
+        {
+            bool isNull = value == null;
+
+            Type temp = typeof(T);
+
+            Stack<Type> stack = new Stack<Type>();
+
+            do
+            {
+                stack.Push(temp);
+                if (temp.IsConstructedGenericType)
+                {
+                    var args = temp.GetGenericArguments();
+                    if (args != null && args.Length == 1 && args[0].IsGenericType)
+                    {
+                        temp = args[0];
+                    }
+                    else
+                        temp = null;
+                }
+                else
+                    temp = null;
+            }
+            while (temp != null);
+
+            object tempValue = value;
+            bool isFirst = true;
+
+            while (stack.Count > 0)
+            {
+                var type = stack.Pop();
+                if (!isNull)
+                    tempValue = GetImplicitOperator(type).Invoke(null, new object[] { tempValue });
+                else
+                {
+                    if (isFirst)
+                    {
+                        tempValue = DynamicActivator.MakeObject(type);
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        var ctor = GetOptionalConstructor(type);
+                        tempValue = ctor.Invoke(new object[] { tempValue });
+                    }
+                }
+            }
+
+            return new Optional<T>((T)tempValue);
+        }
+
+        private static MethodInfo GetImplicitOperator(Type optionalType)
+        {
+            return optionalType.GetMethod("op_Implicit", BindingFlags.Public |
+                                          BindingFlags.Static |
+                                          BindingFlags.InvokeMethod |
+                                          BindingFlags.FlattenHierarchy);
+        }
+
+        private static ConstructorInfo GetOptionalConstructor(Type optionalType)
+        {
+            return optionalType.GetConstructors()[0];
+        }
+    }
+
     public struct Optional<Wrapped> : IOptional<Wrapped>
     {
         private WrappedObject _value;
@@ -90,6 +163,11 @@ namespace FunctionalExtentions.Core
                 Type valueType = value.GetType();
 
                 //TODO : perform recursive search and optional cast call
+                if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(Optional<>))
+                {
+                    var method = OptionalRecursionHelper.GetCastMethod(valueType).MakeGenericMethod(typeof(T));
+                    return (T)method.Invoke(value, null);
+                }
                 return (T)value;
             }
             else
@@ -131,7 +209,7 @@ namespace FunctionalExtentions.Core
                 return wrapped;
             }
 
-            public object Value => _value;
+            internal object Value => _value;
 
             public T TryGetValueOrNull<T>()
             {
@@ -140,6 +218,16 @@ namespace FunctionalExtentions.Core
                     throw new OptionalCastException(nameof(Wrapped), "Optional has not value and cannot be casted to wrapped type.");
                 }
                 return (T)_value;
+            }
+        }
+
+        private static class OptionalRecursionHelper
+        {
+            private static MethodInfo _castMethod;
+
+            internal static MethodInfo GetCastMethod(Type optionalType)
+            {
+                return _castMethod ?? (_castMethod = optionalType.GetMethod("Cast"));
             }
         }
     }

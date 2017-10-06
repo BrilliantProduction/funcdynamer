@@ -25,12 +25,8 @@ namespace FunctionalExtentions
 
         public static object MakeObject(Type instanceType, params object[] args)
         {
-            var timer = Stopwatch.StartNew();
             FactoryObject instanceFactory;
             var flag = !_constructors.ContainsKey(instanceType);
-            timer.Stop();
-            Console.WriteLine($"_constructors.TryGet taked {timer.Elapsed}");
-            timer.Restart();
 
             if (flag)
             {
@@ -48,10 +44,7 @@ namespace FunctionalExtentions
             {
                 instanceFactory = _constructors[instanceType];
             }
-            timer.Stop();
-            Console.WriteLine($"generate and Add taked {timer.Elapsed}");
 
-            timer.Restart();
             object res;
 
             if (!instanceFactory.IsDefault)
@@ -62,8 +55,6 @@ namespace FunctionalExtentions
             {
                 res = instanceFactory.MakeDefaultObject();
             }
-            timer.Stop();
-            Console.WriteLine($"instance creation taked {timer.Elapsed}\n\n");
 
             return res;
         }

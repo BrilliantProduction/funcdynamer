@@ -76,5 +76,10 @@ namespace FunctionalExtentions
 
             return CastHelper.CanImplicitCast(from, to);
         }
+
+        public static MethodInfo GetImplicitOperator(this Type from, Type to)
+        {
+            return CastHelper.GetImplicitOperator(from, to);
+        }
     }
 }
