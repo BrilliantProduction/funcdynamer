@@ -8,6 +8,8 @@ namespace FunctionalExtentions.Core
 {
     public static class Optional
     {
+        private static MethodInfo _createIfNull;
+
         public static Optional<T> Null<T>() => new Optional<T>();
 
         public static Optional<T> From<T>(object value)
@@ -49,6 +51,8 @@ namespace FunctionalExtentions.Core
                     if (isFirst)
                     {
                         tempValue = DynamicActivator.MakeObject(type);
+                        var createDefault = GetCreateDefault(type);
+                        createDefault.Invoke(tempValue, null);
                         isFirst = false;
                     }
                     else
@@ -73,6 +77,12 @@ namespace FunctionalExtentions.Core
         private static ConstructorInfo GetOptionalConstructor(Type optionalType)
         {
             return optionalType.GetConstructors()[0];
+        }
+
+        private static MethodInfo GetCreateDefault(Type optionalType)
+        {
+            return _createIfNull ?? (_createIfNull = optionalType.GetMethod("CreateDefaultValueIfNull",
+                            BindingFlags.NonPublic | BindingFlags.Instance));
         }
     }
 
@@ -163,10 +173,17 @@ namespace FunctionalExtentions.Core
                 Type valueType = value.GetType();
 
                 //TODO : perform recursive search and optional cast call
-                if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(Optional<>))
+                if (valueType != typeof(T) && valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(Optional<>))
                 {
                     var method = OptionalRecursionHelper.GetCastMethod(valueType).MakeGenericMethod(typeof(T));
-                    return (T)method.Invoke(value, null);
+                    try
+                    {
+                        return (T)method.Invoke(value, null);
+                    }
+                    catch
+                    {
+                        throw new OptionalCastException(nameof(T), "Optional has not value and cannot be casted to wrapped type.");
+                    }
                 }
                 return (T)value;
             }
