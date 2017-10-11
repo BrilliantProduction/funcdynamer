@@ -8,81 +8,38 @@ namespace FunctionalExtentions.Core
 {
     public static class Optional
     {
-        private static MethodInfo _createIfNull;
+        private static MethodInfo _createWrappedObject;
 
         public static Optional<T> Null<T>() => new Optional<T>();
 
         public static Optional<T> From<T>(object value)
         {
+            Optional<T> result = new Optional<T>();
             bool isNull = value == null;
-
             Type temp = typeof(T);
-
-            Stack<Type> stack = new Stack<Type>();
-
-            do
+            if (!isNull)
             {
-                stack.Push(temp);
-                if (temp.IsConstructedGenericType)
-                {
-                    var args = temp.GetGenericArguments();
-                    if (args != null && args.Length == 1 && args[0].IsGenericType)
-                    {
-                        temp = args[0];
-                    }
-                    else
-                        temp = null;
-                }
-                else
-                    temp = null;
-            }
-            while (temp != null);
-
-            object tempValue = value;
-            bool isFirst = true;
-
-            while (stack.Count > 0)
-            {
-                var type = stack.Pop();
-                if (!isNull)
-                    tempValue = GetImplicitOperator(type).Invoke(null, new object[] { tempValue });
-                else
-                {
-                    if (isFirst)
-                    {
-                        tempValue = DynamicActivator.MakeObject(type);
-                        var createDefault = GetCreateDefault(type);
-                        createDefault.Invoke(tempValue, null);
-                        isFirst = false;
-                    }
-                    else
-                    {
-                        var ctor = GetOptionalConstructor(type);
-                        tempValue = ctor.Invoke(new object[] { tempValue });
-                    }
-                }
+                var createWrapped = GetCreateWrappedObject(result.GetType());
+                var wrappedObject = createWrapped.Invoke(null, new object[] { value, temp });
+                var field = GetValueField(result.GetType());
+                object boxedRes = result;
+                field.SetValue(boxedRes, wrappedObject);
+                result = (Optional<T>)boxedRes;
             }
 
-            return new Optional<T>((T)tempValue);
+            return result;
         }
 
-        private static MethodInfo GetImplicitOperator(Type optionalType)
+        private static MethodInfo GetCreateWrappedObject(Type optionalType)
         {
-            return optionalType.GetMethod("op_Implicit", BindingFlags.Public |
-                                          BindingFlags.Static |
-                                          BindingFlags.InvokeMethod |
-                                          BindingFlags.FlattenHierarchy);
+            return _createWrappedObject ??
+                (_createWrappedObject = optionalType.GetMethod("CreateValue",
+                            BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod));
         }
 
-        private static ConstructorInfo GetOptionalConstructor(Type optionalType)
+        private static FieldInfo GetValueField(Type optionalType)
         {
-            return optionalType.GetConstructors()[0];
-        }
-
-        private static MethodInfo GetCreateDefault(Type optionalType)
-        {
-            return _createIfNull ?? (_createIfNull = optionalType.GetMethod("CreateDefaultValueIfNull",
-                            BindingFlags.NonPublic | BindingFlags.Instance));
+            return optionalType.GetField("_value", BindingFlags.Instance | BindingFlags.NonPublic);
         }
     }
 
@@ -92,14 +49,7 @@ namespace FunctionalExtentions.Core
 
         public Optional(Wrapped value)
         {
-            if (value == null)
-            {
-                _value = WrappedObject.CreateDefault();
-            }
-            else
-            {
-                _value = WrappedObject.Create(value);
-            }
+            _value = CreateValue(value);
         }
 
         public bool HasValue
@@ -167,6 +117,7 @@ namespace FunctionalExtentions.Core
 
         public T Cast<T>()
         {
+            CreateDefaultValueIfNull();
             object value = _value.Value;
             if (_value.HasValue)
             {
@@ -195,8 +146,15 @@ namespace FunctionalExtentions.Core
         {
             if (_value == null)
             {
-                _value = WrappedObject.CreateDefault();
+                _value = WrappedObject.CreateDefault(typeof(Wrapped));
             }
+        }
+
+        private static WrappedObject CreateValue(object source, Type wrapped = null)
+        {
+            if (source == null)
+                return WrappedObject.CreateDefault(typeof(Wrapped));
+            return WrappedObject.Create(source, wrapped ?? source.GetType());
         }
 
         private class WrappedObject
@@ -212,18 +170,77 @@ namespace FunctionalExtentions.Core
                 _value = value;
             }
 
-            internal static WrappedObject Create(object obj)
+            internal static WrappedObject Create(object obj, Type wrappedType)
             {
-                var wrapped = new WrappedObject(obj);
-                wrapped._hasValue = true;
-                return wrapped;
+                return CreateWrappedObject(obj, wrappedType);
             }
 
-            internal static WrappedObject CreateDefault()
+            internal static WrappedObject CreateDefault(Type wrappedType)
             {
-                var wrapped = new WrappedObject(defaultValue);
-                wrapped._hasValue = false;
-                return wrapped;
+                return CreateWrappedObject(defaultValue, wrappedType);
+            }
+
+            private static WrappedObject CreateWrappedObject(object value, Type wrappedType)
+            {
+                WrappedObject result;
+                object tempValue = value;
+                bool isNull = value == null;
+                Type optionalType = typeof(Optional<>);
+
+                if (!isNull && value.GetType() == wrappedType)
+                {
+                    result = new WrappedObject(tempValue);
+                    result._hasValue = tempValue != null;
+                    return result;
+                }
+
+                if (wrappedType.IsConstructedGenericType && wrappedType.IsGenericOfType(optionalType))
+                {
+                    Type temp = wrappedType;
+                    Stack<Type> stack = new Stack<Type>();
+                    do
+                    {
+                        if (temp.IsConstructedGenericType && temp.IsGenericOfType(optionalType))
+                        {
+                            stack.Push(temp);
+                            var args = temp.GetGenericArguments();
+                            if (args != null && args.Length == 1 && args[0].IsGenericOfType(optionalType))
+                            {
+                                temp = args[0];
+                            }
+                            else
+                                temp = null;
+                        }
+                        else
+                            temp = null;
+                    }
+                    while (temp != null);
+
+                    bool isFirst = true;
+                    while (stack.Count > 0)
+                    {
+                        var type = stack.Pop();
+                        if (!isNull && isFirst && type.GetGenericArguments()[0] == tempValue.GetType())
+                        {
+                            tempValue = OptionalRecursionHelper.GetImplicitOperator(type).Invoke(null, new object[] { tempValue });
+                            isFirst = false;
+                        }
+                        else if (isFirst)
+                        {
+                            tempValue = DynamicActivator.MakeObject(type);
+                            isFirst = false;
+                        }
+                        else
+                        {
+                            var ctor = OptionalRecursionHelper.GetOptionalConstructor(type);
+                            tempValue = ctor.Invoke(new object[] { tempValue });
+                        }
+                    }
+                }
+
+                result = new WrappedObject(tempValue);
+                result._hasValue = tempValue != null;
+                return result;
             }
 
             internal object Value => _value;
@@ -245,6 +262,19 @@ namespace FunctionalExtentions.Core
             internal static MethodInfo GetCastMethod(Type optionalType)
             {
                 return _castMethod ?? (_castMethod = optionalType.GetMethod("Cast"));
+            }
+
+            internal static MethodInfo GetImplicitOperator(Type optionalType)
+            {
+                return optionalType.GetMethod("op_Implicit", BindingFlags.Public |
+                                              BindingFlags.Static |
+                                              BindingFlags.InvokeMethod |
+                                              BindingFlags.FlattenHierarchy);
+            }
+
+            internal static ConstructorInfo GetOptionalConstructor(Type optionalType)
+            {
+                return optionalType.GetConstructors()[0];
             }
         }
     }

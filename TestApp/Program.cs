@@ -37,7 +37,7 @@ namespace TestApp
                 var value = opt.Cast<int>();
                 stopWatch.Stop();
                 if ((i + 1) % 100 == 0)
-                    Console.WriteLine($"{i + 1}-th iteration elapsed timespan: {stopWatch.ElapsedTicks}");
+                    Console.WriteLine($"{value} {i + 1}-th iteration elapsed timespan: {stopWatch.ElapsedTicks}");
             }
 
             Console.ReadKey();
