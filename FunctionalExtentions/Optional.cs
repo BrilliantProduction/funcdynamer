@@ -10,7 +10,7 @@ namespace FunctionalExtentions.Core
     {
         private static MethodInfo _createWrappedObject;
 
-        public static Optional<T> Null<T>() => new Optional<T>();
+        public static Optional<T> Null<T>() => From<T>(null);
 
         public static Optional<T> From<T>(object value)
         {
@@ -194,32 +194,14 @@ namespace FunctionalExtentions.Core
                     return result;
                 }
 
-                if (wrappedType.IsConstructedGenericType && wrappedType.IsGenericOfType(optionalType))
+                if (IsOptionalType(wrappedType))
                 {
-                    Type temp = wrappedType;
-                    Stack<Type> stack = new Stack<Type>();
-                    do
-                    {
-                        if (temp.IsConstructedGenericType && temp.IsGenericOfType(optionalType))
-                        {
-                            stack.Push(temp);
-                            var args = temp.GetGenericArguments();
-                            if (args != null && args.Length == 1 && args[0].IsGenericOfType(optionalType))
-                            {
-                                temp = args[0];
-                            }
-                            else
-                                temp = null;
-                        }
-                        else
-                            temp = null;
-                    }
-                    while (temp != null);
+                    Stack<Type> typesStack = GetOptionalTypesStack(wrappedType);
 
                     bool isFirst = true;
-                    while (stack.Count > 0)
+                    while (typesStack.Count > 0)
                     {
-                        var type = stack.Pop();
+                        var type = typesStack.Pop();
                         if (!isNull && isFirst && type.GetGenericArguments()[0] == tempValue.GetType())
                         {
                             tempValue = OptionalRecursionHelper.GetImplicitOperator(type).Invoke(null, new object[] { tempValue });
@@ -241,6 +223,35 @@ namespace FunctionalExtentions.Core
                 result = new WrappedObject(tempValue);
                 result._hasValue = tempValue != null;
                 return result;
+            }
+
+            private static bool IsOptionalType(Type type)
+            {
+                return type.IsConstructedGenericType && type.GetGenericTypeDefinition() == typeof(Optional<>);
+            }
+
+            private static Stack<Type> GetOptionalTypesStack(Type optionalType)
+            {
+                Type temp = optionalType;
+                Stack<Type> typesStack = new Stack<Type>();
+                do
+                {
+                    if (IsOptionalType(temp))
+                    {
+                        typesStack.Push(temp);
+                        var args = temp.GetGenericArguments();
+                        if (args != null && args.Length == 1 && IsOptionalType(args[0]))
+                        {
+                            temp = args[0];
+                        }
+                        else
+                            temp = null;
+                    }
+                    else
+                        temp = null;
+                }
+                while (temp != null);
+                return typesStack;
             }
 
             internal object Value => _value;
