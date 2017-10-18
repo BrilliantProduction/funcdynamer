@@ -65,8 +65,7 @@ namespace FunctionalExtentions.Core
         {
             get
             {
-                CreateDefaultValueIfNull();
-                return _value.TryGetValueOrNull<Wrapped>();
+                return Cast<Wrapped>();
             }
         }
 
@@ -126,7 +125,7 @@ namespace FunctionalExtentions.Core
                 //TODO : perform recursive search and optional cast call
                 if (valueType != typeof(T) && valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(Optional<>))
                 {
-                    var method = OptionalRecursionHelper.GetCastMethod(valueType).MakeGenericMethod(typeof(T));
+                    var method = OptionalHelper.GetCastMethod(valueType).MakeGenericMethod(typeof(T));
                     try
                     {
                         return (T)method.Invoke(value, null);
@@ -194,27 +193,30 @@ namespace FunctionalExtentions.Core
                     return result;
                 }
 
-                if (IsOptionalType(wrappedType))
+                if (OptionalHelper.IsOptionalType(wrappedType))
                 {
-                    Stack<Type> typesStack = GetOptionalTypesStack(wrappedType);
+                    Stack<Type> typesStack = OptionalHelper.GetOptionalTypeArgumentsStack(wrappedType);
 
-                    bool isFirst = true;
+                    bool isFirstTime = true;
                     while (typesStack.Count > 0)
                     {
-                        var type = typesStack.Pop();
-                        if (!isNull && isFirst && type.GetGenericArguments()[0] == tempValue.GetType())
+                        var argumentType = typesStack.Pop();
+                        if (isFirstTime)
                         {
-                            tempValue = OptionalRecursionHelper.GetImplicitOperator(type).Invoke(null, new object[] { tempValue });
-                            isFirst = false;
-                        }
-                        else if (isFirst)
-                        {
-                            tempValue = DynamicActivator.MakeObject(type);
-                            isFirst = false;
+                            if (!isNull && argumentType.GetGenericArguments()[0] == tempValue.GetType())
+                            {
+                                tempValue = OptionalHelper.GetImplicitOperator(argumentType).Invoke(null, new object[] { tempValue });
+                                isFirstTime = false;
+                            }
+                            else
+                            {
+                                tempValue = DynamicActivator.MakeObject(argumentType);
+                                isFirstTime = false;
+                            }
                         }
                         else
                         {
-                            var ctor = OptionalRecursionHelper.GetOptionalConstructor(type);
+                            var ctor = OptionalHelper.GetOptionalConstructor(argumentType);
                             tempValue = ctor.Invoke(new object[] { tempValue });
                         }
                     }
@@ -225,68 +227,63 @@ namespace FunctionalExtentions.Core
                 return result;
             }
 
-            private static bool IsOptionalType(Type type)
-            {
-                return type.IsConstructedGenericType && type.GetGenericTypeDefinition() == typeof(Optional<>);
-            }
+            internal object Value => _value;
+        }
+    }
 
-            private static Stack<Type> GetOptionalTypesStack(Type optionalType)
+    internal static class OptionalHelper
+    {
+        internal static MethodInfo GetCastMethod(Type optionalType)
+        {
+            return optionalType.GetMethod("Cast");
+        }
+
+        internal static MethodInfo GetImplicitOperator(Type optionalType)
+        {
+            return optionalType.GetMethod("op_Implicit", BindingFlags.Public |
+                                          BindingFlags.Static |
+                                          BindingFlags.InvokeMethod |
+                                          BindingFlags.FlattenHierarchy);
+        }
+
+        internal static ConstructorInfo GetOptionalConstructor(Type optionalType)
+        {
+            return optionalType.GetConstructors()[0];
+        }
+
+        internal static bool IsOptionalType(Type type)
+        {
+            return type.IsConstructedGenericType && type.GetGenericTypeDefinition() == typeof(Optional<>);
+        }
+
+        internal static Stack<Type> GetOptionalTypeArgumentsStack(Type optionalType)
+        {
+            Type temp = optionalType;
+            Stack<Type> typesStack = new Stack<Type>();
+            do
             {
-                Type temp = optionalType;
-                Stack<Type> typesStack = new Stack<Type>();
-                do
+                if (IsOptionalType(temp))
                 {
-                    if (IsOptionalType(temp))
+                    typesStack.Push(temp);
+                    var args = temp.GetGenericArguments();
+                    if (args != null && args.Length == 1 && IsOptionalType(args[0]))
                     {
-                        typesStack.Push(temp);
-                        var args = temp.GetGenericArguments();
-                        if (args != null && args.Length == 1 && IsOptionalType(args[0]))
-                        {
-                            temp = args[0];
-                        }
-                        else
-                            temp = null;
+                        temp = args[0];
                     }
                     else
                         temp = null;
                 }
-                while (temp != null);
-                return typesStack;
+                else
+                    temp = null;
             }
-
-            internal object Value => _value;
-
-            public T TryGetValueOrNull<T>()
-            {
-                if (_value == null && typeof(T).IsValueType && typeof(T).Name != typeof(Nullable<>).Name)
-                {
-                    throw new OptionalCastException(nameof(Wrapped), "Optional has not value and cannot be casted to wrapped type.");
-                }
-                return (T)_value;
-            }
+            while (temp != null);
+            return typesStack;
         }
 
-        private static class OptionalRecursionHelper
+        internal static object GetWrappedObjectFromOptional(Type optionalType, object instance)
         {
-            private static MethodInfo _castMethod;
-
-            internal static MethodInfo GetCastMethod(Type optionalType)
-            {
-                return _castMethod ?? (_castMethod = optionalType.GetMethod("Cast"));
-            }
-
-            internal static MethodInfo GetImplicitOperator(Type optionalType)
-            {
-                return optionalType.GetMethod("op_Implicit", BindingFlags.Public |
-                                              BindingFlags.Static |
-                                              BindingFlags.InvokeMethod |
-                                              BindingFlags.FlattenHierarchy);
-            }
-
-            internal static ConstructorInfo GetOptionalConstructor(Type optionalType)
-            {
-                return optionalType.GetConstructors()[0];
-            }
+            return optionalType.GetField("_value", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(instance);
         }
     }
 }
