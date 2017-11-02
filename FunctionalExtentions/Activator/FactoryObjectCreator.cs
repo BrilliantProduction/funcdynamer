@@ -64,23 +64,12 @@ namespace FunctionalExtentions
         private static Delegate CreateDynamicFactory(Type instanceType, Type[] parameterTypes,
             Type delegateType, Type[] argTypes = null)
         {
-            var timer = Stopwatch.StartNew();
             if (argTypes == null)
                 argTypes = Type.EmptyTypes;
-            timer.Stop();
-            Console.WriteLine($"Typename conversion taked {timer.Elapsed}");
 
-            timer.Restart();
             ConstructorInfo constructor = instanceType.GetConstructor(argTypes);
 
-            timer.Stop();
-            Console.WriteLine($"Constructor extracting taked {timer.Elapsed}");
-
-            timer.Restart();
             var retType = instanceType.IsValueType ? DefaultDelegateResult : instanceType;
-            timer.Stop();
-            Console.WriteLine($"RetType choosing taked {timer.Elapsed}");
-            timer.Restart();
 
             var method = new DynamicMethod(
                 name: FactoryDelegateName,
@@ -89,10 +78,6 @@ namespace FunctionalExtentions
                 m: typeof(FactoryObjectCreator).Module,
                 skipVisibility: true);
 
-            timer.Stop();
-            Console.WriteLine($"Dynamic method creation taked {timer.Elapsed}");
-
-            timer.Restart();
             ILGenerator ilGen = method.GetILGenerator();
             // Constructor for value types could be null
             if (constructor != null)
@@ -120,12 +105,7 @@ namespace FunctionalExtentions
             }
 
             ilGen.Emit(OpCodes.Ret);
-            timer.Stop();
-            Console.WriteLine($"Il code generation taked {timer.Elapsed}");
-            timer.Restart();
             var @delegate = method.CreateDelegate(delegateType);
-            timer.Stop();
-            Console.WriteLine($"Delegate creation taked {timer.Elapsed} \n");
 
             return @delegate;
         }
