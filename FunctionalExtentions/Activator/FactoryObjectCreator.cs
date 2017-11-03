@@ -40,7 +40,7 @@ namespace FunctionalExtentions
             else
             {
                 var instanceDelegate = ConstructCreateInstanceDelegate(instanceType, args);
-                factory = new FactoryObject(instanceDelegate);
+                factory = new FactoryObject(instanceDelegate, ReflectionTypeExtentions.GetTypeArrayFromArgs(args));
             }
             return factory;
         }
@@ -52,7 +52,7 @@ namespace FunctionalExtentions
 
         private static CreateInstanceDelegate ConstructCreateInstanceDelegate(Type instanceType, object[] args)
         {
-            var argTypes = GetTypeArrayFromArgs(args);
+            var argTypes = ReflectionTypeExtentions.GetTypeArrayFromArgs(args);
             var @delegate =
                 (CreateInstanceDelegate)CreateDynamicFactory(instanceType,
                                                                 ConcreteDelegateDefaultArgType,
@@ -108,16 +108,6 @@ namespace FunctionalExtentions
             var @delegate = method.CreateDelegate(delegateType);
 
             return @delegate;
-        }
-
-        private static Type[] GetTypeArrayFromArgs(object[] args)
-        {
-            if (args == null || args.Length == 0)
-            {
-                return Type.EmptyTypes;
-            }
-
-            return args.Select(x => x.GetType()).ToArray();
         }
     }
 }
