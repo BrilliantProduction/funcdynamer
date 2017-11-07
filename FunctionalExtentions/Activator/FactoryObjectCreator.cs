@@ -85,7 +85,7 @@ namespace FunctionalExtentions
                 for (int i = 0; i < argTypes.Length; i++)
                 {
                     var argType = argTypes[i];
-                    ilGen.Emit(OpCodes.Ldarg, i);
+                    ilGen.Emit(OpCodes.Ldarg, 0);
                     ilGen.Emit(OpCodes.Ldc_I4, i);
                     ilGen.Emit(OpCodes.Ldelem_Ref);
                     if (argType.IsValueType)
@@ -94,6 +94,10 @@ namespace FunctionalExtentions
                         ilGen.Emit(OpCodes.Castclass, argType);
                 }
                 ilGen.Emit(OpCodes.Newobj, constructor);
+                if (instanceType.IsValueType)
+                {
+                    ilGen.Emit(OpCodes.Box, instanceType);
+                }
             }
             else
             {
