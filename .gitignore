@@ -242,3 +242,4 @@ ModelManifest.xml
 .fake/
 /TestApp
 /.axoCover/settings.json
+/.axoCover/runs

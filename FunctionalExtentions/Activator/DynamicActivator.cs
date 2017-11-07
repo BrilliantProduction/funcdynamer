@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace FunctionalExtentions
 {
+    //TODO: Add default mask to get all constructors both public and non-public
     public static class DynamicActivator
     {
         private static readonly Dictionary<Type, List<FactoryObject>> _constructors;
