@@ -41,10 +41,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\CollectionArrayHelper.cs" />
+    <Compile Include="Helpers\CollectionExtentions.cs" />
     <Compile Include="Helpers\ExtendCollectionInfo.cs" />
     <Compile Include="Lists\ArrayList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queues\Stack.cs" />
+    <Compile Include="Sorting\SortingAlgorithm.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj">
