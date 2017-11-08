@@ -86,5 +86,15 @@ namespace FunctionalExtentions
         {
             return CastHelper.GetImplicitOperator(from, to);
         }
+
+        public static Type[] GetTypeArrayFromArgs(object[] args)
+        {
+            if (args == null || args.Length == 0)
+            {
+                return Type.EmptyTypes;
+            }
+
+            return args.Select(x => x.GetType()).ToArray();
+        }
     }
 }

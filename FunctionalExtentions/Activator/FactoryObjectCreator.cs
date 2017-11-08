@@ -40,7 +40,7 @@ namespace FunctionalExtentions
             else
             {
                 var instanceDelegate = ConstructCreateInstanceDelegate(instanceType, args);
-                factory = new FactoryObject(instanceDelegate);
+                factory = new FactoryObject(instanceDelegate, ReflectionTypeExtentions.GetTypeArrayFromArgs(args));
             }
             return factory;
         }
@@ -52,7 +52,7 @@ namespace FunctionalExtentions
 
         private static CreateInstanceDelegate ConstructCreateInstanceDelegate(Type instanceType, object[] args)
         {
-            var argTypes = GetTypeArrayFromArgs(args);
+            var argTypes = ReflectionTypeExtentions.GetTypeArrayFromArgs(args);
             var @delegate =
                 (CreateInstanceDelegate)CreateDynamicFactory(instanceType,
                                                                 ConcreteDelegateDefaultArgType,
@@ -85,7 +85,7 @@ namespace FunctionalExtentions
                 for (int i = 0; i < argTypes.Length; i++)
                 {
                     var argType = argTypes[i];
-                    ilGen.Emit(OpCodes.Ldarg, i);
+                    ilGen.Emit(OpCodes.Ldarg, 0);
                     ilGen.Emit(OpCodes.Ldc_I4, i);
                     ilGen.Emit(OpCodes.Ldelem_Ref);
                     if (argType.IsValueType)
@@ -94,6 +94,10 @@ namespace FunctionalExtentions
                         ilGen.Emit(OpCodes.Castclass, argType);
                 }
                 ilGen.Emit(OpCodes.Newobj, constructor);
+                if (instanceType.IsValueType)
+                {
+                    ilGen.Emit(OpCodes.Box, instanceType);
+                }
             }
             else
             {
@@ -108,16 +112,6 @@ namespace FunctionalExtentions
             var @delegate = method.CreateDelegate(delegateType);
 
             return @delegate;
-        }
-
-        private static Type[] GetTypeArrayFromArgs(object[] args)
-        {
-            if (args == null || args.Length == 0)
-            {
-                return Type.EmptyTypes;
-            }
-
-            return args.Select(x => x.GetType()).ToArray();
         }
     }
 }
