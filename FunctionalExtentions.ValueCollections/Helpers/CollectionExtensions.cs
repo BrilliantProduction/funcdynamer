@@ -12,7 +12,7 @@ namespace FunctionalExtentions.ValueCollections.Helpers
         Second
     }
 
-    public static class CollectionExtentions
+    public static class CollectionExtensions
     {
         public static void CopyTo<T>(this ICollection<T> source, ICollection<T> destination)
         {
