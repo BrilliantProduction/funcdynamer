@@ -7,31 +7,29 @@ using System.Threading.Tasks;
 
 namespace FunctionalExtentions.ValueCollections.Sorting
 {
-    public class SelectionSortAlgorithm : SortingAlgorithm
+    public class InsertionSortAlgorithm : SortingAlgorithm
     {
         public override void Sort<T>(ICollection<T> source, IComparer<T> comparer, SortDirection sortDirection = SortDirection.Up)
         {
             var sourceArray = source.ToArray();
             comparer = comparer ?? Comparer<T>.Default;
             Func<T, T, bool> compare = (x, y) =>
-              {
-                  var comparisonResut = comparer.Compare(x, y);
-                  return sortDirection == SortDirection.Up ? comparisonResut > 0 : comparisonResut < 0;
-              };
-
-            for (int i = 0; i < sourceArray.Length - 1; i++)
             {
-                int currentIndex = i;
-                for (int j = i + 1; j < sourceArray.Length; j++)
+                var comparisonResut = comparer.Compare(x, y);
+                return sortDirection == SortDirection.Up ? comparisonResut > 0 : comparisonResut < 0;
+            };
+
+            for (int i = 1; i < sourceArray.Length; i++)
+            {
+                var temp = sourceArray[i];
+                int j = i - 1;
+                for (; j >= 0 && compare(sourceArray[j], temp); j--)
                 {
-                    if (compare(sourceArray[currentIndex], sourceArray[j]))
-                    {
-                        currentIndex = j;
-                    }
+                    sourceArray[j + 1] = sourceArray[j];
                 }
-                if (i != currentIndex)
-                    Swap(sourceArray, i, currentIndex);
+                sourceArray[j + 1] = temp;
             }
+            source.Clear();
             sourceArray.CopyTo(source);
         }
 
