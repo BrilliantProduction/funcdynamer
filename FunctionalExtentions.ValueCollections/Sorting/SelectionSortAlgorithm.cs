@@ -38,13 +38,13 @@ namespace FunctionalExtentions.ValueCollections.Sorting
         public override void Sort<T>(ICollection<T> source, Comparison<T> comparison, SortDirection sortDirection = SortDirection.Up)
         {
             var comparer = Comparer<T>.Create(comparison);
-            Sort(source, comparer);
+            Sort(source, comparer, sortDirection);
         }
 
         public override void Sort<T>(ICollection<T> source, SortDirection sortDirection = SortDirection.Up)
         {
             var comparer = Comparer<T>.Create((x, y) => x.CompareTo(y));
-            Sort(source, comparer);
+            Sort(source, comparer, sortDirection);
         }
 
         public override IEnumerable<T> Sort<T>(IEnumerable<T> source, IComparer<T> comparer, SortDirection sortDirection = SortDirection.Up)

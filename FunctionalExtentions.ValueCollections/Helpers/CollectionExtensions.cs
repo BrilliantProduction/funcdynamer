@@ -33,11 +33,13 @@ namespace FunctionalExtentions.ValueCollections.Helpers
 
         public static ICollection<T> GetHalf<T>(this ICollection<T> collection, CollectionHalf half)
         {
-            var list = new List<T>();
             var sourceArray = collection.ToArray();
 
-            int length = half == CollectionHalf.First ? (collection.Count >> 1) + 1 : collection.Count;
-            int startIndex = half == CollectionHalf.First ? 0 : (collection.Count >> 1) + 1;
+            int length = half == CollectionHalf.First ? (collection.Count >> 1) : collection.Count;
+            int startIndex = half == CollectionHalf.First ? 0 : (collection.Count >> 1);
+
+            int arrayLength = length - startIndex;
+            var list = new List<T>(arrayLength);
 
             for (int i = startIndex; i < length; i++)
             {
