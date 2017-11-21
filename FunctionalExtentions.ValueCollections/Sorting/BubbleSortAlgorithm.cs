@@ -2,12 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FunctionalExtentions.ValueCollections.Sorting
 {
-    public class InsertionSortAlgorithm : SortingAlgorithm
+    public class BubbleSortAlgorithm : SortingAlgorithm
     {
         public override void Sort<T>(ICollection<T> source, IComparer<T> comparer, SortDirection sortDirection = SortDirection.Up)
         {
@@ -19,16 +17,22 @@ namespace FunctionalExtentions.ValueCollections.Sorting
                 return sortDirection == SortDirection.Up ? comparisonResut > 0 : comparisonResut < 0;
             };
 
-            for (int i = 1; i < sourceArray.Length; i++)
+            var length = sourceArray.Length;
+            do
             {
-                var temp = sourceArray[i];
-                int j = i - 1;
-                for (; j >= 0 && compare(sourceArray[j], temp); j--)
+                var newLength = 0;
+                for (int i = 1; i < length; i++)
                 {
-                    sourceArray[j + 1] = sourceArray[j];
+                    if (compare(sourceArray[i - 1], sourceArray[i]))
+                    {
+                        Swap(sourceArray, i - 1, i);
+                        newLength = i;
+                    }
                 }
-                sourceArray[j + 1] = temp;
+                length = newLength;
             }
+            while (length != 0);
+
             source.Clear();
             sourceArray.CopyTo(source);
         }

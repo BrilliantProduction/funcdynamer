@@ -46,6 +46,7 @@
     <Compile Include="Lists\ArrayList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queues\Stack.cs" />
+    <Compile Include="Sorting\BubbleSortAlgorithm.cs" />
     <Compile Include="Sorting\InsertionSortAlgorithm.cs" />
     <Compile Include="Sorting\MergeSortAlgorithm.cs" />
     <Compile Include="Sorting\SelectionSortAlgorithm.cs" />

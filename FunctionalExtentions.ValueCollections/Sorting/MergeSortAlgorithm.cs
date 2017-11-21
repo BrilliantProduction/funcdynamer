@@ -19,35 +19,6 @@ namespace FunctionalExtentions.ValueCollections.Sorting
             sorted.CopyTo(source);
         }
 
-        public override void Sort<T>(ICollection<T> source, Comparison<T> comparison, SortDirection sortDirection = SortDirection.Up)
-        {
-            var comparer = Comparer<T>.Create(comparison);
-            Sort(source, comparer, sortDirection);
-        }
-
-        public override void Sort<T>(ICollection<T> source, SortDirection sortDirection = SortDirection.Up)
-        {
-            var comparer = Comparer<T>.Create((x, y) => x.CompareTo(y));
-            Sort(source, comparer, sortDirection);
-        }
-
-        public override IEnumerable<T> Sort<T>(IEnumerable<T> source, IComparer<T> comparer, SortDirection sortDirection = SortDirection.Up)
-        {
-            var sourceList = source.ToList();
-            Sort(sourceList, comparer, sortDirection);
-            return sourceList;
-        }
-
-        public override IEnumerable<T> Sort<T>(IEnumerable<T> source, Comparison<T> comparison, SortDirection sortDirection = SortDirection.Up)
-        {
-            return Sort(source, Comparer<T>.Create(comparison), sortDirection);
-        }
-
-        public override IEnumerable<T> Sort<T>(IEnumerable<T> source, SortDirection sortDirection = SortDirection.Up)
-        {
-            return Sort(source, Comparer<T>.Create((x, y) => x.CompareTo(y)), sortDirection);
-        }
-
         private T[] SortInternal<T>(T[] array, IComparer<T> comparer, SortDirection sortDirection)
         {
             if (array.Length == 1)
