@@ -14,7 +14,7 @@ namespace TestApp
             var collection = new List<int>();
             FillRandomData(collection);
 
-            var sorting = new BubbleSortAlgorithm();
+            var sorting = new IterativeMergeSortAlgorithm();
             sorting.Sort(collection, SortDirection.Down);
             PrintCollection(collection);
         }

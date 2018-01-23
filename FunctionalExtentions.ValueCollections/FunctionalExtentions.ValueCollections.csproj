@@ -48,6 +48,7 @@
     <Compile Include="Queues\Stack.cs" />
     <Compile Include="Sorting\BubbleSortAlgorithm.cs" />
     <Compile Include="Sorting\InsertionSortAlgorithm.cs" />
+    <Compile Include="Sorting\IterativeMergeSortAlgorithm.cs" />
     <Compile Include="Sorting\MergeSortAlgorithm.cs" />
     <Compile Include="Sorting\SelectionSortAlgorithm.cs" />
     <Compile Include="Sorting\SortDirection.cs" />
