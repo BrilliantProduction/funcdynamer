@@ -10,6 +10,16 @@ namespace FunctionalExtentions.Core
         private TreeNode<T> _parent;
         private List<TreeNode<T>> _childNodes;
 
+        public T Value => _value;
+
+        public TreeNode<T> Parent => _parent;
+
+        public bool HasParent => _parent != null;
+
+        public bool HasChildren => _childNodes != null && _childNodes.Any();
+
+        public IReadOnlyList<TreeNode<T>> ChildNodes => _childNodes.AsReadOnly();
+
         public TreeNode(T value)
         {
             _value = value;
@@ -57,14 +67,6 @@ namespace FunctionalExtentions.Core
         {
             return GetEnumerator();
         }
-
-        public T Value => _value;
-
-        public TreeNode<T> Parent => _parent;
-
-        public bool HasChildren => _childNodes != null && _childNodes.Any();
-
-        public IReadOnlyList<TreeNode<T>> ChildNodes => _childNodes.AsReadOnly();
 
         private class TreeNodeEnumerator : IEnumerator<TreeNode<T>>
         {
