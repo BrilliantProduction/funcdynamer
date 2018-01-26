@@ -268,7 +268,7 @@ namespace FunctionalExtentions.ValueCollections
             public StackEnumerator(Stack<T> collection)
             {
                 _collection = collection;
-                _currentIndex = -1;
+                _currentIndex = _collection.Count - 1;
                 _currentElement = default(T);
             }
 
@@ -283,19 +283,20 @@ namespace FunctionalExtentions.ValueCollections
             public bool MoveNext()
             {
                 //Avoids going beyond the end of the collection.
-                if (++_currentIndex >= _collection.Count)
+                if (_currentIndex < 0)
                 {
                     return false;
                 }
 
                 // Set current box to next item in collection.
                 _currentElement = _collection[_currentIndex];
+                _currentIndex--;
                 return true;
             }
 
             public void Reset()
             {
-                _currentIndex = -1;
+                _currentIndex = _collection.Count - 1;
             }
         }
     }

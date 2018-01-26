@@ -1,6 +1,7 @@
 ﻿using FunctionalExtentions;
 using FunctionalExtentions.Core;
 using FunctionalExtentions.ValueCollections;
+using FunctionalExtentions.ValueCollections.Queues;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -40,7 +41,13 @@ namespace TestApp
             //        Console.WriteLine($"{value} {i + 1}-th iteration elapsed timespan: {stopWatch.ElapsedTicks}");
             //}
 
-            SortingAlgorithmsTester.DoTest();
+            //SortingAlgorithmsTester.DoTest();
+            var deque = new Deque<int>();
+            for (int i = 0; i < 50; i++)
+            {
+                deque.AddFirst(i);
+            }
+            Console.WriteLine(string.Join(", ", deque));
 
             Console.ReadKey();
         }
