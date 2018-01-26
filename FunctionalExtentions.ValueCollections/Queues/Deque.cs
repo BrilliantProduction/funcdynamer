@@ -153,7 +153,7 @@ namespace FunctionalExtentions.ValueCollections.Queues
 
         public bool IsEmpty()
         {
-            return _dequeCollection != null || Count == 0;
+            return _dequeCollection == null || Count == 0;
         }
 
         public void CopyTo(T[] array, int arrayIndex)
@@ -161,15 +161,33 @@ namespace FunctionalExtentions.ValueCollections.Queues
             throw new NotImplementedException();
         }
 
-        public IEnumerator<T> GetEnumerator()
-        {
-            return new DequeEnumerator(this);
-        }
-
         public bool Remove(T item)
         {
             //TODO: add proper remove implementation
-            return false;
+            if (!Contains(item))
+                return false;
+
+            int index = -1;
+            for (int i = 0; i < Count; i++)
+            {
+                if (item.Equals(_dequeCollection[i]))
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            for (++index; index < Count; index++)
+            {
+                _dequeCollection[index - 1] = _dequeCollection[index];
+            }
+            _count--;
+            return true;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new DequeEnumerator(this);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -195,6 +213,7 @@ namespace FunctionalExtentions.ValueCollections.Queues
                 Array.Copy(_dequeCollection, newArray, _dequeCollection.Length);
 
             _dequeCollection = newArray;
+
             _capacity = _dequeCollection.Length;
         }
         #endregion
