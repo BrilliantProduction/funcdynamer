@@ -98,8 +98,8 @@ namespace FunctionalExtentions.Proxying.Compability.Comparers
                 firstParameter != null && secondParameter == null)
                 return false;
 
-            if (firstParameter.ParameterType != secondParameter.ParameterType ||
-                !secondParameter.ParameterType.IsAssignableFrom(firstParameter.ParameterType) ||
+            if (firstParameter.ParameterType != secondParameter.ParameterType &&
+                !secondParameter.ParameterType.IsAssignableFrom(firstParameter.ParameterType) &&
                 !firstParameter.ParameterType.IsImplicitlyCastableTo(secondParameter.ParameterType))
                 return false;
 
