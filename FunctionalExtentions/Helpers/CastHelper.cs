@@ -10,8 +10,10 @@ namespace FunctionalExtentions
         private const int MaxCacheSize = 50;
         private const string OpExplicit = "op_Explicit";
         private const string OpImplicit = "op_Implicit";
+        private static readonly Type ConvertibleType = typeof(IConvertible);
+        private const BindingFlags All = BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public;
 
-        private static readonly Cacher<KeyValuePair<Type, Type>, bool> _expricitCastCache =
+        private static readonly Cacher<KeyValuePair<Type, Type>, bool> _explicitCastCache =
             new Cacher<KeyValuePair<Type, Type>, bool>(MaxCacheSize);
 
         private static readonly Cacher<KeyValuePair<Type, Type>, bool> _implicitCastCache =
@@ -26,29 +28,23 @@ namespace FunctionalExtentions
         {
             // explicit conversion always works if there's implicit conversion
             if (CanImplicitCast(typeFromCast, typeCastTo))
-            {
                 return true;
-            }
 
             var key = new KeyValuePair<Type, Type>(typeFromCast, typeCastTo);
             bool cachedValue;
-            if (_expricitCastCache.TryGetValue(key, out cachedValue))
-            {
+            if (_explicitCastCache.TryGetValue(key, out cachedValue))
                 return cachedValue;
-            }
 
             // for nullable types, we can simply strip off the nullability and evaluate the underyling types
             var underlyingFrom = Nullable.GetUnderlyingType(typeFromCast);
             var underlyingTo = Nullable.GetUnderlyingType(typeCastTo);
             if (underlyingFrom != null || underlyingTo != null)
-            {
                 return CanExplicitCast(underlyingFrom ?? typeFromCast, underlyingTo ?? typeCastTo);
-            }
 
             bool result = typeFromCast.IsValueType ? CheckCast(typeFromCast, typeCastTo, OpExplicit)
                 : CanExplicitCastReferenceType(typeFromCast, typeCastTo);
 
-            _expricitCastCache[key] = result;
+            _explicitCastCache[key] = result;
             return result;
         }
 
@@ -85,18 +81,24 @@ namespace FunctionalExtentions
         {
             // not strictly necessary, but speeds things up and avoids polluting the cache
             if (to.IsAssignableFrom(from))
-            {
                 return true;
-            }
 
             var key = new KeyValuePair<Type, Type>(from, to);
             bool cachedValue;
             if (_implicitCastCache.TryGetValue(key, out cachedValue))
-            {
                 return cachedValue;
-            }
 
-            bool result = CheckCast(from, to, OpImplicit);
+            bool result = false;
+            if (from.IsPrimitive && to.IsPrimitive && from.HasInterface(ConvertibleType))
+            {
+                var toMethodName = $"{ConvertibleType.FullName}.To{to.Name}";
+                var convertMethod = from.GetMembers(All).FirstOrDefault(x => x.Name.Equals(toMethodName));
+                if (convertMethod != null)
+                    result = true;
+            }
+            else
+                result = CheckCast(from, to, OpImplicit);
+
             _implicitCastCache[key] = result;
             return result;
         }

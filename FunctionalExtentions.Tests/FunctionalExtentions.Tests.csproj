@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FunctionalExtentions.Tests</RootNamespace>
     <AssemblyName>FunctionalExtentions.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -16,6 +16,7 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,10 +58,12 @@
     <Compile Include="Activator\DynamicActivatorTest.cs" />
     <Compile Include="CollectionExtentionsTest.cs" />
     <Compile Include="CurryHelperTest.cs" />
+    <Compile Include="Dummies\Comparison\EqualFields.cs" />
     <Compile Include="ExceptionHelperTest.cs" />
     <Compile Include="OptionalCollectionTest.cs" />
     <Compile Include="OptionalTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Proxying\Comparison\FieldComparerTest.cs" />
     <Compile Include="ScopeTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -71,11 +74,16 @@
       <Project>{0989D485-D6AE-4049-912F-6CE2E83012E7}</Project>
       <Name>FunctionalExtentions.Abstract</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FunctionalExtentions.Proxying\FunctionalExtentions.Proxying.csproj">
+      <Project>{f32126fc-9388-47f3-8da3-9e06ab4dfe0b}</Project>
+      <Name>FunctionalExtentions.Proxying</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FunctionalExtentions\FunctionalExtentions.Core.csproj">
       <Project>{98C6124C-D894-47B3-BD6A-7DA401A5603F}</Project>
       <Name>FunctionalExtentions.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

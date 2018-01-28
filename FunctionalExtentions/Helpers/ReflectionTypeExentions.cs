@@ -12,6 +12,19 @@ namespace FunctionalExtentions
             return type.FindGenericTypeDefinition(genericTypeDefinition) != null;
         }
 
+        public static bool HasInterface(this Type type, Type interfaceType)
+        {
+            return type.GetInterfaces().Any(x => x.Equals(interfaceType));
+        }
+
+        public static bool HasInterface<TInterface>(this Type type)
+        {
+            if (!typeof(TInterface).IsInterface)
+                throw new ArgumentException("Invalid interface type passed.", nameof(TInterface));
+
+            return HasInterface(type, typeof(TInterface));
+        }
+
         public static Type[] GetGenericArguments(this Type type, Type genericTypeDefinition)
         {
             var locatedTypeDefinition = type.FindGenericTypeDefinition(genericTypeDefinition);
