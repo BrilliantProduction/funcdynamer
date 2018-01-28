@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunctionalExtentions
+namespace FunctionalExtentions.Core.DuckTyping
 {
     public static class Ducker
     {

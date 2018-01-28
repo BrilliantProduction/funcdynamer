@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace FunctionalExtentions.Proxying.Compability.Comparers
+namespace FunctionalExtentions.Proxying
 {
     public interface ICompatibilityComparer
     {

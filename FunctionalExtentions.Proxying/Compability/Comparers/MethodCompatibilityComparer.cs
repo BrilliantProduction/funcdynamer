@@ -24,6 +24,16 @@ namespace FunctionalExtentions.Proxying.Compability.Comparers
                 !firstMethod.ReturnType.IsImplicitlyCastableTo(secondMethod.ReturnType))
                 return false;
 
+            Modifiers firstMethodModifiers = GetAccessModifiers(firstMethod);
+            Modifiers secondMethodModifiers = GetAccessModifiers(secondMethod);
+
+            if (firstMethodModifiers == Modifiers.None || secondMethodModifiers == Modifiers.None
+                || firstMethodModifiers != secondMethodModifiers)
+                return false;
+
+            if (!AreParametersCompatible(firstMethod.GetParameters(), secondMethod.GetParameters(), true))
+                return false;
+
             return true;
         }
 
@@ -88,8 +98,8 @@ namespace FunctionalExtentions.Proxying.Compability.Comparers
                 firstParameter != null && secondParameter == null)
                 return false;
 
-            if (firstParameter.ParameterType != secondParameter.ParameterType &&
-                !secondParameter.ParameterType.IsAssignableFrom(firstParameter.ParameterType) &&
+            if (firstParameter.ParameterType != secondParameter.ParameterType ||
+                !secondParameter.ParameterType.IsAssignableFrom(firstParameter.ParameterType) ||
                 !firstParameter.ParameterType.IsImplicitlyCastableTo(secondParameter.ParameterType))
                 return false;
 

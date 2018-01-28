@@ -81,7 +81,7 @@ namespace FunctionalExtentions.Proxying.Compability.Comparers
 
             foreach (KeyValuePair<MemberInfo, MemberInfo> memberPair in memberPairs)
             {
-                ICompatibilityComparer comparer = _comparers.FirstOrDefault(x => x.TargetMemberType == memberPair.Key.MemberType);
+                ICompatibilityComparer comparer = GetCompabilityComparerByMemberType(memberPair.Key.MemberType);
                 if (comparer != null && !comparer.IsCompatible(memberPair.Key, memberPair.Value))
                 {
                     return false;

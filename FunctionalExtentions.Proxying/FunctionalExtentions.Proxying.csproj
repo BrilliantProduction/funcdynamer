@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="Compability\Comparers\CompatibilityComparerBase.cs" />
     <Compile Include="Compability\Comparers\FieldCompatibilityComparer.cs" />
-    <Compile Include="Compability\Comparers\ICompatibilityComparer.cs" />
+    <Compile Include="ICompatibilityComparer.cs" />
     <Compile Include="Compability\Comparers\GeneralCompatibilityComparer.cs" />
     <Compile Include="Compability\Comparers\MethodCompatibilityComparer.cs" />
     <Compile Include="Compability\Comparers\PropertyCompatibilityComparer.cs" />
