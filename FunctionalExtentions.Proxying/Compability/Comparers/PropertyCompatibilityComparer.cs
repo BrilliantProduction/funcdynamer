@@ -1,7 +1,7 @@
 ﻿using FunctionalExtentions.Proxying.Enums;
 using System.Reflection;
 
-namespace FunctionalExtentions.Proxying.Compability
+namespace FunctionalExtentions.Proxying.Compability.Comparers
 {
     public sealed class PropertyCompatibilityComparer : CompatibilityComparerBase
     {

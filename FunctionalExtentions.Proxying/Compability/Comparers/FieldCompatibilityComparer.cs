@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunctionalExtentions.Proxying.Compability
+namespace FunctionalExtentions.Proxying.Compability.Comparers
 {
     public sealed class FieldCompatibilityComparer : CompatibilityComparerBase
     {

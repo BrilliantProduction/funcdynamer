@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace FunctionalExtentions.Proxying.Compability
+namespace FunctionalExtentions.Proxying.Compability.Comparers
 {
     public abstract class CompatibilityComparerBase : ICompatibilityComparer
     {

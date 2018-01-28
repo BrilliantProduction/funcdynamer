@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunctionalExtentions
+namespace FunctionalExtentions.Proxying.Compability.Checkers
 {
     public static class TypeCompabilityChecker
     {

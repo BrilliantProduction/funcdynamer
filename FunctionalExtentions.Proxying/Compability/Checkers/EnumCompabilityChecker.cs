@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunctionalExtentions.Proxying
+namespace FunctionalExtentions.Proxying.Compability.Checkers
 {
     public static class EnumCompabilityChecker
     {

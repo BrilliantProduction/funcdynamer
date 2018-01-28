@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace FunctionalExtentions.Proxying.Compability
+namespace FunctionalExtentions.Proxying.Compability.Comparers
 {
     public sealed class MethodCompatibilityComparer : CompatibilityComparerBase
     {
