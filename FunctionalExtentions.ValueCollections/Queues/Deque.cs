@@ -33,6 +33,15 @@ namespace FunctionalExtentions.ValueCollections.Queues
 
         }
 
+        public Deque(IEnumerable<T> collection)
+        {
+            _count = collection.Count();
+            _capacity = DefaultCapacity + _count;
+            _dequeCollection = new T[_capacity];
+            _isReadOnly = false;
+            Array.Copy(collection.ToArray(), _dequeCollection, _count);
+        }
+
         public int Count => _count;
 
         public bool IsReadOnly => _isReadOnly;
