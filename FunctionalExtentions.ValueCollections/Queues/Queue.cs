@@ -3,9 +3,6 @@ using FunctionalExtentions.Abstract.ValueCollections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FunctionalExtentions.ValueCollections.Queues
 {
@@ -18,17 +15,16 @@ namespace FunctionalExtentions.ValueCollections.Queues
 
         private T[] _queueCollection;
         private int _count;
-        private int _capasity;
+        private int _capacity;
         private bool _isReadOnly;
-
 
         public Queue(Queue<T> queue)
         {
             _isReadOnly = queue.IsReadOnly;
             _count = queue.Count;
-            _capasity = CollectionArrayHelper.GetScalingPoint(_count,
+            _capacity = CollectionArrayHelper.GetScalingPoint(_count,
                 new ExtendCollectionInfo(0, 0, DefaultCapacity, DefaultGrowingRate, GrowingScaleLimit, GrowingScale));
-            _queueCollection = new T[_capasity];
+            _queueCollection = new T[_capacity];
             Array.Copy(queue._queueCollection, _queueCollection, _count);
         }
 
@@ -39,7 +35,7 @@ namespace FunctionalExtentions.ValueCollections.Queues
         #region ICollection implementation
         public void Add(T item)
         {
-            throw new NotImplementedException();
+            Enqueue(item);
         }
 
         public void Clear()
@@ -66,17 +62,46 @@ namespace FunctionalExtentions.ValueCollections.Queues
         #region IQueue implementation
         public void Enqueue(T item)
         {
-            throw new NotImplementedException();
+            if (!IsReadOnly)
+            {
+                if (CollectionArrayHelper.CheckCapacity(1, GetCollectionInfo()))
+                {
+                    Extend(1);
+                }
+
+                _queueCollection[Count] = item;
+
+                _count++;
+            }
         }
 
         public T Dequeue()
         {
-            throw new NotImplementedException();
+            if (IsEmpty())
+                throw new ArgumentOutOfRangeException();
+
+            var first = _queueCollection[0];
+            for (int i = 1; i < Count; i++)
+            {
+                _queueCollection[i - 1] = _queueCollection[i];
+            }
+
+            _count--;
+
+            return first;
         }
 
         public T Peek()
         {
-            throw new NotImplementedException();
+            if (IsEmpty())
+                throw new ArgumentOutOfRangeException();
+
+            return _dequeCollection[0];
+        }
+
+        public bool IsEmpty()
+        {
+            return _queueCollection == null || Count == 0;
         }
         #endregion
 
@@ -90,14 +115,82 @@ namespace FunctionalExtentions.ValueCollections.Queues
         #region IEnumerable implementation
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return GetEnumerator();
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new QueueEnumerator(this);
         }
 
         #endregion
+
+        #region Collection growing
+        private ExtendCollectionInfo GetCollectionInfo()
+        {
+            return new ExtendCollectionInfo(Count, _capacity, DefaultCapacity,
+                DefaultGrowingRate, GrowingScaleLimit, GrowingScale
+            );
+        }
+
+        private void Extend(int newElementsCount = 0)
+        {
+            var scalingPoint = CollectionArrayHelper.GetScalingPoint(newElementsCount, GetCollectionInfo());
+            var newArray = new T[_capacity + scalingPoint];
+
+            if (_queueCollection != null && Count > 0)
+                Array.Copy(_queueCollection, newArray, _queueCollection.Length);
+
+            _queueCollection = newArray;
+
+            _capacity = _queueCollection.Length;
+        }
+        #endregion
+
+        private T this[int index]
+        {
+            get
+            {
+                return _queueCollection[index];
+            }
+        }
+
+        private struct QueueEnumerator : IEnumerator<T>
+        {
+            private readonly Queue<T> _collection;
+            private int _currentIndex;
+            private T _currentElement;
+
+            public QueueEnumerator(Queue<T> source)
+            {
+                _collection = source;
+                _currentIndex = -1;
+                _currentElement = default(T);
+            }
+
+            public T Current => _currentElement;
+
+            object IEnumerator.Current => _currentElement;
+
+            public void Dispose() { }
+
+            public bool MoveNext()
+            {
+                // Avoids going beyond the end of the collection.
+                if (++_currentIndex >= _collection.Count)
+                {
+                    return false;
+                }
+
+                // Set current box to next item in collection.
+                _currentElement = _collection[_currentIndex];
+                return true;
+            }
+
+            public void Reset()
+            {
+                _currentIndex = -1;
+            }
+        }
     }
 }

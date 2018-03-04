@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FunctionalExtentions.Abstract.ValueCollections
+﻿namespace FunctionalExtentions.Abstract.ValueCollections
 {
-    public interface IDeque<T> : IValueCollection<T>
+    public interface IDeque<T> :  IQueue<T>
     {
         void AddFirst(T item);
 

@@ -4,8 +4,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FunctionalExtentions.ValueCollections.Queues
 {
@@ -134,6 +132,25 @@ namespace FunctionalExtentions.ValueCollections.Queues
         {
             return new Deque<T>(this);
         }
+
+        #region IQueue implementation
+
+        public void Enqueue(T item)
+        {
+            AddLast(item);
+        }
+
+        public T Dequeue()
+        {
+            return RemoveFirst();
+        }
+
+        public T Peek()
+        {
+            return PeekFirst();
+        }
+
+        #endregion
 
         #region ICollection methods
         public void Add(T item)
