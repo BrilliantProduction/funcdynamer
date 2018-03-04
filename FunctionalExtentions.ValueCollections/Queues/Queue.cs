@@ -96,7 +96,7 @@ namespace FunctionalExtentions.ValueCollections.Queues
             if (IsEmpty())
                 throw new ArgumentOutOfRangeException();
 
-            return _dequeCollection[0];
+            return _queueCollection[0];
         }
 
         public bool IsEmpty()
