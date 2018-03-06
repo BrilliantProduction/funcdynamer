@@ -55,6 +55,7 @@
     <Compile Include="Sorting\SelectionSortAlgorithm.cs" />
     <Compile Include="Sorting\SortDirection.cs" />
     <Compile Include="Sorting\SortingAlgorithm.cs" />
+    <Compile Include="Trees\RedBlackTree.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj">
@@ -62,7 +63,9 @@
       <Name>FunctionalExtentions.Abstract</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Sets\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
