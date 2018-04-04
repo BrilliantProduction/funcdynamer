@@ -55,6 +55,7 @@
     <Compile Include="Sorting\SelectionSortAlgorithm.cs" />
     <Compile Include="Sorting\SortDirection.cs" />
     <Compile Include="Sorting\SortingAlgorithm.cs" />
+    <Compile Include="Trees\BinarySearchTree.cs" />
     <Compile Include="Trees\RedBlackTree.cs" />
     <Compile Include="Trees\RedBlackTreeNode.cs" />
   </ItemGroup>
