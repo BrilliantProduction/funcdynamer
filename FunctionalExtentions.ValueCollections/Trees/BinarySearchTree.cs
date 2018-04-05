@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FunctionalExtentions.Abstract.ValueCollections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +13,7 @@ namespace FunctionalExtentions.ValueCollections.Trees
     /// </summary>
     /// <typeparam name="TKey">The type of the key.</typeparam>
     /// <typeparam name="TValue">The type of the value.</typeparam>
-    public class BinarySearchTree<TKey, TValue>
+    public class BinarySearchTree<TKey, TValue> : IMap<TKey, TValue>
     {
         private Node<TKey, TValue> _root;
 
@@ -57,6 +59,9 @@ namespace FunctionalExtentions.ValueCollections.Trees
 
         public int Count => Size(_root);
 
+        //TODO: enable possibility to make map read-only
+        public bool IsReadOnly => false;
+
         public TValue Get(TKey key)
         {
             return Get(_root, key);
@@ -90,5 +95,49 @@ namespace FunctionalExtentions.ValueCollections.Trees
             node.Count = Size(node.Left) + Size(node.Right) + 1;
             return node;
         }
+
+        #region ICollection implementation
+        public void Add(KeyValuePair<TKey, TValue> item)
+        {
+            Put(item.Key, item.Value);
+        }
+
+        //TODO: add proper clear impl
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        //TODO: implement this method
+        public bool Contains(KeyValuePair<TKey, TValue> item)
+        {
+            throw new NotImplementedException();
+        }
+
+        //TODO: add possibility to copy tree to the array
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        //TODO: add remove method implementation
+        public bool Remove(KeyValuePair<TKey, TValue> item)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IEnumerable implementation
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }
