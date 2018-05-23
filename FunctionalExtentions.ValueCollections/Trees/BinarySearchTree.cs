@@ -96,6 +96,136 @@ namespace FunctionalExtentions.ValueCollections.Trees
             return node;
         }
 
+        #region Useful methods implementation
+        public TKey Min()
+        {
+            return Min(_root).Key;
+        }
+
+        private Node<TKey, TValue> Min(Node<TKey, TValue> source)
+        {
+            if (source == null) return null;
+            if (source.Left == null) return source;
+            else return Min(source.Left);
+        }
+
+        public TKey Max()
+        {
+            return Max(_root).Key;
+        }
+
+        private Node<TKey, TValue> Max(Node<TKey, TValue> source)
+        {
+            if (source == null) return null;
+            if (source.Right == null) return source;
+            else return Max(source.Right);
+        }
+
+        public TKey Floor(TKey key)
+        {
+            Node<TKey, TValue> result = Floor(key, _root);
+            if (result == null) return default(TKey);
+
+            return result.Key;
+        }
+
+        private Node<TKey, TValue> Floor(TKey key, Node<TKey, TValue> source)
+        {
+            Node<TKey, TValue> result = null;
+            if (source == null) return null;
+
+            int compare = Comparer.Compare(key, source.Key);
+            if (compare == 0) return source;
+            if (compare < 0) return Floor(key, source.Left);
+
+            result = Floor(key, source.Right);
+            if (result == null) result = source;
+
+            return result;
+        }
+
+        public TKey Ceiling(TKey key)
+        {
+            Node<TKey, TValue> result = Ceiling(key, _root);
+            if (result == null) return default(TKey);
+
+            return result.Key;
+        }
+
+        private Node<TKey, TValue> Ceiling(TKey key, Node<TKey, TValue> source)
+        {
+            Node<TKey, TValue> result = null;
+            if (source == null) return null;
+
+            int compare = Comparer.Compare(key, source.Key);
+            if (compare == 0) return source;
+            if (compare < 0)
+            {
+                result = Ceiling(key, source.Left);
+                if (result == null) result = source;
+                return result;
+            }
+
+            return Ceiling(key, source.Right);
+        }
+
+        public TKey Select(int rank)
+        {
+            return Select(rank, _root).Key;
+        }
+
+        private Node<TKey, TValue> Select(int rank, Node<TKey, TValue> source)
+        {
+            if (source == null) return null;
+            var t = Size(source.Left);
+            if (t > rank) return Select(rank, source.Left);
+            if (t < rank) return Select(rank - t - 1, source.Right);
+            return source;
+        }
+
+        public int Rank(TKey key)
+        {
+            return Rank(key, _root);
+        }
+
+        private int Rank(TKey key, Node<TKey, TValue> source)
+        {
+            if (source == null) return 0;
+            int compare = Comparer.Compare(key, source.Key);
+            if (compare == 0) return Size(source.Left);
+            if (compare < 0) return Rank(key, source.Left);
+            return 1 + Size(source.Left) + Rank(key, source.Right);
+        }
+
+        public void DeleteMin()
+        {
+            _root = DeleteMin(_root);
+        }
+
+        private Node<TKey, TValue> DeleteMin(Node<TKey, TValue> node)
+        {
+            if (node == null) return null;
+            if (node.Left == null) return node.Right;
+            node.Left = DeleteMin(node.Left);
+            node.Count = Size(node.Left) + Size(node.Right) + 1;
+            return node;
+        }
+
+        public void DeleteMax()
+        {
+            _root = DeleteMax(_root);
+        }
+
+        private Node<TKey, TValue> DeleteMax(Node<TKey, TValue> node)
+        {
+            if (node == null) return null;
+            if (node.Right == null) return node.Left;
+            node.Right = DeleteMax(node.Right);
+            node.Count = Size(node.Left) + Size(node.Right) + 1;
+            return node;
+        }
+        #endregion
+
         #region ICollection implementation
         public void Add(KeyValuePair<TKey, TValue> item)
         {
