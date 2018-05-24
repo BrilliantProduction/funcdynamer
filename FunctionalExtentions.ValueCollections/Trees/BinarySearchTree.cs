@@ -224,6 +224,33 @@ namespace FunctionalExtentions.ValueCollections.Trees
             node.Count = Size(node.Left) + Size(node.Right) + 1;
             return node;
         }
+
+        public void Delete(TKey key)
+        {
+            _root = Delete(_root, key);
+        }
+
+        private Node<TKey, TValue> Delete(Node<TKey, TValue> node, TKey key)
+        {
+            if (node == null) return null;
+
+            int cmp = Comparer.Compare(key, node.Key);
+            if (cmp < 0) node.Left = Delete(node.Left, key);
+            else if (cmp > 0) node.Right = Delete(node.Right, key);
+            else
+            {
+                if (node.Right == null) return node.Left;
+                if (node.Left == null) return node.Right;
+
+                Node<TKey, TValue> temp = node;
+                node = Min(temp.Right);
+                node.Right = DeleteMin(temp.Right);
+                node.Left = temp.Left;
+            }
+
+            node.Count = Size(node.Left) + Size(node.Right) + 1;
+            return node;
+        }
         #endregion
 
         #region ICollection implementation
