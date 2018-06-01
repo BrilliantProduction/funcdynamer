@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace FunctionalExtentions.ValueCollections
 {
-    public struct Stack<T> : IStack<T>, ICloneable<Stack<T>>
+    public struct ValueStack<T> : IStack<T>, ICloneable<ValueStack<T>>
     {
         public const int DefaultCapacity = 10;
         private const int DefaultGrowingRate = 9;
@@ -19,7 +19,7 @@ namespace FunctionalExtentions.ValueCollections
         private int _capacity;
         private bool _isReadOnly;
 
-        public Stack(int capacity)
+        public ValueStack(int capacity)
         {
             _count = 0;
             _capacity = capacity;
@@ -27,7 +27,7 @@ namespace FunctionalExtentions.ValueCollections
             _isReadOnly = false;
         }
 
-        public Stack(IEnumerable<T> collection)
+        public ValueStack(IEnumerable<T> collection)
         {
             _count = collection.Count();
             _capacity = DefaultCapacity + _count;
@@ -40,7 +40,7 @@ namespace FunctionalExtentions.ValueCollections
             }
         }
 
-        public Stack(IEnumerable<T> collection, bool isReadOnly)
+        public ValueStack(IEnumerable<T> collection, bool isReadOnly)
         {
             _count = collection.Count();
             _capacity = DefaultCapacity + _count;
@@ -81,9 +81,9 @@ namespace FunctionalExtentions.ValueCollections
             }
         }
 
-        public Stack<T> Clone()
+        public ValueStack<T> Clone()
         {
-            return new Stack<T>(this);
+            return new ValueStack<T>(this);
         }
 
         public bool Contains(T item)
@@ -261,11 +261,11 @@ namespace FunctionalExtentions.ValueCollections
 
         private struct StackEnumerator : IEnumerator<T>
         {
-            private readonly Stack<T> _collection;
+            private readonly ValueStack<T> _collection;
             private int _currentIndex;
             private T _currentElement;
 
-            public StackEnumerator(Stack<T> collection)
+            public StackEnumerator(ValueStack<T> collection)
             {
                 _collection = collection;
                 _currentIndex = _collection.Count - 1;

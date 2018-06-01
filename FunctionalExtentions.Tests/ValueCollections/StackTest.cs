@@ -15,7 +15,7 @@ namespace FunctionalExtentions.Tests.ValueCollections
         {
             //Arrange && Act
             var testArray = new int[] { 1, 2, 3, 4, 5 };
-            var myStack = new FunctionalExtentions.ValueCollections.Stack<int>();
+            var myStack = new FunctionalExtentions.ValueCollections.ValueStack<int>();
             var systemStack = new Stack<int>();
 
             foreach (var item in testArray)

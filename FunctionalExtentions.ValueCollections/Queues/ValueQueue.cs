@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace FunctionalExtentions.ValueCollections.Queues
 {
-    public struct Queue<T> : IQueue<T>, ICloneable<Queue<T>>
+    public struct ValueQueue<T> : IQueue<T>, ICloneable<ValueQueue<T>>
     {
         public const int DefaultCapacity = 10;
         private const int DefaultGrowingRate = 9;
@@ -18,7 +18,7 @@ namespace FunctionalExtentions.ValueCollections.Queues
         private int _capacity;
         private bool _isReadOnly;
 
-        public Queue(Queue<T> queue)
+        public ValueQueue(ValueQueue<T> queue)
         {
             _isReadOnly = queue.IsReadOnly;
             _count = queue.Count;
@@ -106,9 +106,9 @@ namespace FunctionalExtentions.ValueCollections.Queues
         #endregion
 
         #region Cloneable implementation
-        public Queue<T> Clone()
+        public ValueQueue<T> Clone()
         {
-            return new Queue<T>(this);
+            return new ValueQueue<T>(this);
         }
         #endregion
 
@@ -157,11 +157,11 @@ namespace FunctionalExtentions.ValueCollections.Queues
 
         private struct QueueEnumerator : IEnumerator<T>
         {
-            private readonly Queue<T> _collection;
+            private readonly ValueQueue<T> _collection;
             private int _currentIndex;
             private T _currentElement;
 
-            public QueueEnumerator(Queue<T> source)
+            public QueueEnumerator(ValueQueue<T> source)
             {
                 _collection = source;
                 _currentIndex = -1;

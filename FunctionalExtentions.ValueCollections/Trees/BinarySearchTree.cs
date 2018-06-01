@@ -1,10 +1,13 @@
-﻿using FunctionalExtentions.Abstract.ValueCollections;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using FunctionalExtentions.Abstract.ValueCollections;
+using FunctionalExtentions.ValueCollections.Queues;
+
 
 namespace FunctionalExtentions.ValueCollections.Trees
 {
@@ -48,6 +51,11 @@ namespace FunctionalExtentions.ValueCollections.Trees
                 _key = key;
                 Value = value;
                 Count = count;
+            }
+
+            public static implicit operator KeyValuePair<K, V>(Node<K,V> node)
+            {
+                return new KeyValuePair<K, V>(node.Key, node.Value);
             }
         }
 
@@ -251,6 +259,40 @@ namespace FunctionalExtentions.ValueCollections.Trees
             node.Count = Size(node.Left) + Size(node.Right) + 1;
             return node;
         }
+
+
+        public IEnumerable<TKey> Keys()
+        {
+            return Keys(Min(), Max());
+        }
+
+        public IEnumerable<TKey> Keys(TKey min, TKey max)
+        {
+            var queue = new ValueQueue<TKey>();
+            EnumerableProvider(_root, ref queue, min, max, (x) => x.Key);
+            return queue;
+        }
+
+        public IEnumerable<TValue> Values()
+        {
+            var queue = new ValueQueue<TValue>();
+            EnumerableProvider(_root, ref queue, Min(), Max(), (x) => x.Value);
+            return queue;
+        }
+
+        private void EnumerableProvider<TResult>(Node<TKey, TValue> node,
+                                                 ref ValueQueue<TResult> queue,
+                                                 TKey min,
+                                                 TKey max,
+                                                 Func<Node<TKey, TValue>, TResult> creator)
+        {
+            if (node == null) return;
+            int minCmp = Comparer.Compare(min, node.Key);
+            int maxCmp = Comparer.Compare(max, node.Key);
+            if (minCmp < 0) EnumerableProvider(node.Left, ref queue, min, max, creator);
+            if (minCmp <= 0 && maxCmp >= 0) queue.Enqueue(creator(node));
+            if (maxCmp > 0) EnumerableProvider(node.Right, ref queue, min, max, creator);
+        }
         #endregion
 
         #region ICollection implementation
@@ -274,7 +316,12 @@ namespace FunctionalExtentions.ValueCollections.Trees
         //TODO: add possibility to copy tree to the array
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            var enumerator = GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                array[arrayIndex] = enumerator.Current;
+                arrayIndex++;
+            }
         }
 
         //TODO: add remove method implementation
@@ -288,12 +335,14 @@ namespace FunctionalExtentions.ValueCollections.Trees
         #region IEnumerable implementation
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            throw new NotImplementedException();
+            var queue = new ValueQueue<KeyValuePair<TKey, TValue>>();
+            EnumerableProvider(_root, ref queue, Min(), Max(), (x) => (KeyValuePair<TKey, TValue>)x);
+            return queue.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return GetEnumerator();
         }
         #endregion
     }
