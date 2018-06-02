@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FunctionalExtentions.Abstract.ValueCollections
+namespace FunctionalExtentions.Abstract.Collections
 {
     public interface IValueList<T> : IList<T>, IValueCollection<T>, IReadOnlyList<T>
     {

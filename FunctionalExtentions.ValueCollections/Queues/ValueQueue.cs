@@ -1,5 +1,5 @@
 ﻿using FunctionalExtentions.Abstract;
-using FunctionalExtentions.Abstract.ValueCollections;
+using FunctionalExtentions.Abstract.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,22 +50,52 @@ namespace FunctionalExtentions.Collections.Queues
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            //just set count to zero
+            //to optimize performance
+            _count = 0;
         }
 
         public bool Contains(T item)
         {
-            throw new NotImplementedException();
+            if (IsEmpty())
+                return false;
+
+            foreach (var element in _queueCollection)
+            {
+                if (item.Equals(element))
+                    return true;
+            }
+
+            return false;
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            Array.Copy(_queueCollection, 0, array, arrayIndex, _count);
         }
 
         public bool Remove(T item)
         {
-            throw new NotImplementedException();
+            //TODO: add proper remove implementation
+            if (!Contains(item))
+                return false;
+
+            int index = -1;
+            for (int i = 0; i < Count; i++)
+            {
+                if (item.Equals(_queueCollection[i]))
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            for (++index; index < Count; index++)
+            {
+                _queueCollection[index - 1] = _queueCollection[index];
+            }
+            _count--;
+            return true;
         }
         #endregion
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using FunctionalExtentions.Abstract.ValueCollections;
+using FunctionalExtentions.Abstract.Collections;
 using FunctionalExtentions.Collections.Queues;
 
 

@@ -1,5 +1,5 @@
 ﻿using FunctionalExtentions.Abstract;
-using FunctionalExtentions.Abstract.ValueCollections;
+using FunctionalExtentions.Abstract.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;

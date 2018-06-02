@@ -1,5 +1,5 @@
 ﻿using FunctionalExtentions.Abstract;
-using FunctionalExtentions.Abstract.ValueCollections;
+using FunctionalExtentions.Abstract.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +19,7 @@ namespace FunctionalExtentions.Collections.Queues
         private int _capacity;
         private bool _isReadOnly;
 
+        #region C-tors
         private Deque(Deque<T> other)
         {
             _count = other.Count;
@@ -50,9 +51,13 @@ namespace FunctionalExtentions.Collections.Queues
             Array.Copy(collection.ToArray(), _dequeCollection, _count);
         }
 
+        #endregion
+
         public int Count => _count;
 
         public bool IsReadOnly => _isReadOnly;
+
+        #region IDeque implementation
 
         public void AddFirst(T item)
         {
@@ -137,11 +142,16 @@ namespace FunctionalExtentions.Collections.Queues
             _count--;
             return last;
         }
+        #endregion
+
+        #region IClonable implementation
 
         public Deque<T> Clone()
         {
             return new Deque<T>(this);
         }
+
+        #endregion
 
         #region IQueue implementation
 
@@ -170,7 +180,9 @@ namespace FunctionalExtentions.Collections.Queues
 
         public void Clear()
         {
-            //todo: add clear collection code
+            //just set count to zero
+            //to optimize performance
+            _count = 0;
         }
 
         public bool Contains(T item)
@@ -194,7 +206,10 @@ namespace FunctionalExtentions.Collections.Queues
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            if (IsEmpty())
+                return;
+
+            Array.Copy(_dequeCollection, 0, array, arrayIndex, _count);
         }
 
         public bool Remove(T item)
