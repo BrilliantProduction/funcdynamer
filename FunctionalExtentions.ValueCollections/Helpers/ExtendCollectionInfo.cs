@@ -1,4 +1,4 @@
-﻿namespace FunctionalExtentions.ValueCollections
+﻿namespace FunctionalExtentions.Collections
 {
     internal struct ExtendCollectionInfo
     {

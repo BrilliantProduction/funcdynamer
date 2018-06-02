@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 using FunctionalExtentions.Abstract.ValueCollections;
-using FunctionalExtentions.ValueCollections.Queues;
+using FunctionalExtentions.Collections.Queues;
 
 
-namespace FunctionalExtentions.ValueCollections.Trees
+namespace FunctionalExtentions.Collections.Trees
 {
     /// <summary>
     /// Binary search tree implementation

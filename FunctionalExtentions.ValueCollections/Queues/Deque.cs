@@ -5,9 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FunctionalExtentions.ValueCollections.Queues
+namespace FunctionalExtentions.Collections.Queues
 {
-    public struct Deque<T> : IDeque<T>, ICloneable<Deque<T>>
+    public class Deque<T> : IDeque<T>, ICloneable<Deque<T>>
     {
         public const int DefaultCapacity = 10;
         private const int DefaultGrowingRate = 9;
@@ -29,6 +29,16 @@ namespace FunctionalExtentions.ValueCollections.Queues
             foreach (var item in other)
                 _dequeCollection[i++] = item;
 
+        }
+
+        public Deque() : this(DefaultCapacity) { }
+
+        public Deque(int capacity)
+        {
+            _count = 0;
+            _capacity = capacity;
+            _dequeCollection = new T[_capacity];
+            _isReadOnly = false;
         }
 
         public Deque(IEnumerable<T> collection)

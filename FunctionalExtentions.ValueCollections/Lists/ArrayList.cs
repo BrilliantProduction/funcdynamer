@@ -5,9 +5,9 @@ using System.Linq;
 using System.Collections;
 using FunctionalExtentions.Abstract;
 
-namespace FunctionalExtentions.ValueCollections
+namespace FunctionalExtentions.Collections
 {
-    public struct ArrayList<T> : IValueList<T>, ICloneable<ArrayList<T>>
+    public class ArrayList<T> : IValueList<T>, ICloneable<ArrayList<T>>
     {
         public const int DefaultCapacity = 10;
         private const int DefaultGrowingRate = 9;
@@ -20,6 +20,8 @@ namespace FunctionalExtentions.ValueCollections
         private T[] _list;
 
         private bool _isReadOnly;
+
+        public ArrayList() : this(DefaultCapacity) { }
 
         public ArrayList(int capacity)
         {

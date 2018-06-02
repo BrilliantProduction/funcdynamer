@@ -4,9 +4,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace FunctionalExtentions.ValueCollections.Queues
+namespace FunctionalExtentions.Collections.Queues
 {
-    public struct ValueQueue<T> : IQueue<T>, ICloneable<ValueQueue<T>>
+    public class ValueQueue<T> : IQueue<T>, ICloneable<ValueQueue<T>>
     {
         public const int DefaultCapacity = 10;
         private const int DefaultGrowingRate = 9;
@@ -17,6 +17,16 @@ namespace FunctionalExtentions.ValueCollections.Queues
         private int _count;
         private int _capacity;
         private bool _isReadOnly;
+
+        public ValueQueue() : this(DefaultCapacity) { }
+
+        public ValueQueue(int capacity)
+        {
+            _count = 0;
+            _capacity = capacity;
+            _queueCollection = new T[_capacity];
+            _isReadOnly = false;
+        }
 
         public ValueQueue(ValueQueue<T> queue)
         {

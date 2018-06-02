@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunctionalExtentions.ValueCollections.Trees
+namespace FunctionalExtentions.Collections.Trees
 {
     /// <summary>
     /// Red-black tree implementation

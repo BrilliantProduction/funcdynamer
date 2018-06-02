@@ -5,9 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FunctionalExtentions.ValueCollections
+namespace FunctionalExtentions.Collections
 {
-    public struct ValueStack<T> : IStack<T>, ICloneable<ValueStack<T>>
+    public class ValueStack<T> : IStack<T>, ICloneable<ValueStack<T>>
     {
         public const int DefaultCapacity = 10;
         private const int DefaultGrowingRate = 9;
@@ -18,6 +18,8 @@ namespace FunctionalExtentions.ValueCollections
         private int _count;
         private int _capacity;
         private bool _isReadOnly;
+
+        public ValueStack() : this(DefaultCapacity) { }
 
         public ValueStack(int capacity)
         {

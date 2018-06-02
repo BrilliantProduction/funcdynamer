@@ -1,4 +1,4 @@
-﻿using FunctionalExtentions.ValueCollections.Queues;
+﻿using FunctionalExtentions.Collections.Queues;
 using NUnit.Framework;
 using System.Linq;
 

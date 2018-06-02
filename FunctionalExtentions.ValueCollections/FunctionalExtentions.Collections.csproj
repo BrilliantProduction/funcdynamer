@@ -7,8 +7,8 @@
     <ProjectGuid>{A851CF74-8D0D-4947-80CC-C59C83C28E4F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FunctionalExtentions.ValueCollections</RootNamespace>
-    <AssemblyName>FunctionalExtentions.ValueCollections</AssemblyName>
+    <RootNamespace>FunctionalExtentions.Collections</RootNamespace>
+    <AssemblyName>FunctionalExtentions.Collections</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

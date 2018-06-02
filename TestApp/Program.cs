@@ -1,7 +1,7 @@
 ﻿using FunctionalExtentions;
 using FunctionalExtentions.Core;
-using FunctionalExtentions.ValueCollections;
-using FunctionalExtentions.ValueCollections.Queues;
+using FunctionalExtentions.Collections;
+using FunctionalExtentions.Collections.Queues;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -1,4 +1,4 @@
-﻿using FunctionalExtentions.ValueCollections.Trees;
+﻿using FunctionalExtentions.Collections.Trees;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

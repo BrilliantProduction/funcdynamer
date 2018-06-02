@@ -1,4 +1,4 @@
-﻿namespace FunctionalExtentions.ValueCollections.Sorting
+﻿namespace FunctionalExtentions.Collections.Sorting
 {
     /// <summary>
     /// Enumeration to customize sorting order

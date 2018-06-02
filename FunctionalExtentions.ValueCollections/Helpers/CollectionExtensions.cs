@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunctionalExtentions.ValueCollections.Helpers
+namespace FunctionalExtentions.Collections.Helpers
 {
     public enum CollectionHalf
     {

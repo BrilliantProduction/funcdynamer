@@ -1,11 +1,11 @@
-﻿using FunctionalExtentions.ValueCollections.Helpers;
+﻿using FunctionalExtentions.Collections.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunctionalExtentions.ValueCollections.Sorting
+namespace FunctionalExtentions.Collections.Sorting
 {
     public class InsertionSortAlgorithm : SortingAlgorithm
     {

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalExtentions.Abstra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalExtentions.Tests", "FunctionalExtentions.Tests\FunctionalExtentions.Tests.csproj", "{4AD9C438-A4ED-4C1F-8C9C-6C5110F4F36E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalExtentions.ValueCollections", "FunctionalExtentions.ValueCollections\FunctionalExtentions.ValueCollections.csproj", "{A851CF74-8D0D-4947-80CC-C59C83C28E4F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalExtentions.Collections", "FunctionalExtentions.ValueCollections\FunctionalExtentions.Collections.csproj", "{A851CF74-8D0D-4947-80CC-C59C83C28E4F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{9B2E66C6-993F-4E34-90CC-A8FF309CADF0}"
 EndProject
@@ -42,5 +42,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {015D2964-5FC0-42D2-A3B8-A6722307FF0C}
 	EndGlobalSection
 EndGlobal

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FunctionalExtentions.ValueCollections.Sorting
+namespace FunctionalExtentions.Collections.Sorting
 {
     public abstract class SortingAlgorithm
     {

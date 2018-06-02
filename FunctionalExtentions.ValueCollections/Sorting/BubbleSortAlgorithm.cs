@@ -1,9 +1,9 @@
-﻿using FunctionalExtentions.ValueCollections.Helpers;
+﻿using FunctionalExtentions.Collections.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FunctionalExtentions.ValueCollections.Sorting
+namespace FunctionalExtentions.Collections.Sorting
 {
     public class BubbleSortAlgorithm : SortingAlgorithm
     {

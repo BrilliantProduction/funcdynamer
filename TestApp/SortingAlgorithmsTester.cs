@@ -1,4 +1,4 @@
-﻿using FunctionalExtentions.ValueCollections.Sorting;
+﻿using FunctionalExtentions.Collections.Sorting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
