@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunctionalExtentions.ValueCollections
+namespace FunctionalExtentions.Collections
 {
     internal static class CollectionArrayHelper
     {

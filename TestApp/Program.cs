@@ -1,6 +1,7 @@
 ﻿using FunctionalExtentions;
 using FunctionalExtentions.Core;
-using FunctionalExtentions.ValueCollections;
+using FunctionalExtentions.Collections;
+using FunctionalExtentions.Collections.Queues;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,17 +29,25 @@ namespace TestApp
 
             //Console.WriteLine("Array of account is explicitly castable to IList AnotherMoney? {0}", typeof(Account[]).IsCastableTo(typeof(IList<AnotherMoney>)));
 
-            var rnd = new Random();
-            for (int i = 0; i < 10000; i++)
+            //var rnd = new Random();
+            //for (int i = 0; i < 10000; i++)
+            //{
+            //    var stopWatch = new Stopwatch();
+            //    stopWatch.Start();
+            //    Optional<Optional<Optional<int>>> opt = Optional.From<Optional<Optional<int>>>(5);
+            //    var value = opt.Cast<int>();
+            //    stopWatch.Stop();
+            //    if ((i + 1) % 100 == 0)
+            //        Console.WriteLine($"{value} {i + 1}-th iteration elapsed timespan: {stopWatch.ElapsedTicks}");
+            //}
+
+            //SortingAlgorithmsTester.DoTest();
+            var deque = new Deque<int>();
+            for (int i = 0; i < 50; i++)
             {
-                var stopWatch = new Stopwatch();
-                stopWatch.Start();
-                Optional<Optional<Optional<int>>> opt = Optional.From<Optional<Optional<int>>>(5);
-                var value = opt.Cast<int>();
-                stopWatch.Stop();
-                if ((i + 1) % 100 == 0)
-                    Console.WriteLine($"{value} {i + 1}-th iteration elapsed timespan: {stopWatch.ElapsedTicks}");
+                deque.AddFirst(i);
             }
+            Console.WriteLine(string.Join(", ", deque));
 
             Console.ReadKey();
         }

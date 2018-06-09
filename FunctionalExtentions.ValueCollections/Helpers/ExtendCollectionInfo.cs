@@ -1,6 +1,6 @@
-﻿namespace FunctionalExtentions.ValueCollections
+﻿namespace FunctionalExtentions.Collections
 {
-    internal struct ExtendCollectionInfo
+    public struct ExtendCollectionInfo
     {
         public int Capacity { get; }
 
