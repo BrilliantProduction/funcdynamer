@@ -58,6 +58,7 @@
     <Compile Include="Trees\BinarySearchTree.cs" />
     <Compile Include="Trees\RedBlackTree.cs" />
     <Compile Include="Trees\RedBlackTreeNode.cs" />
+    <Compile Include="ValueCollectionBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj">

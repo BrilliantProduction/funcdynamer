@@ -7,17 +7,9 @@ using System.Linq;
 
 namespace FunctionalExtentions.Collections.Queues
 {
-    public class Deque<T> : IDeque<T>, ICloneable<Deque<T>>
+    public class Deque<T> : ValueCollectionBase<T>,  IDeque<T>, ICloneable<Deque<T>>
     {
-        public const int DefaultCapacity = 10;
-        private const int DefaultGrowingRate = 9;
-        private const double GrowingScaleLimit = 0.9;
-        private const double GrowingScale = 0.5;
-
         private T[] _dequeCollection;
-        private int _count;
-        private int _capacity;
-        private bool _isReadOnly;
 
         #region C-tors
         private Deque(Deque<T> other)
@@ -53,10 +45,6 @@ namespace FunctionalExtentions.Collections.Queues
 
         #endregion
 
-        public int Count => _count;
-
-        public bool IsReadOnly => _isReadOnly;
-
         #region IDeque implementation
 
         public void AddFirst(T item)
@@ -65,7 +53,7 @@ namespace FunctionalExtentions.Collections.Queues
             {
                 if (CollectionArrayHelper.CheckCapacity(1, GetCollectionInfo()))
                 {
-                    Extend(1);
+                    Extend(ref _dequeCollection, 1);
                 }
 
                 //TODO: review this code for better logic
@@ -92,7 +80,7 @@ namespace FunctionalExtentions.Collections.Queues
             {
                 if (CollectionArrayHelper.CheckCapacity(1, GetCollectionInfo()))
                 {
-                    Extend(1);
+                    Extend(ref _dequeCollection, 1);
                 }
 
                 _dequeCollection[Count] = item;
@@ -173,19 +161,19 @@ namespace FunctionalExtentions.Collections.Queues
         #endregion
 
         #region ICollection methods
-        public void Add(T item)
+        public override void Add(T item)
         {
             AddLast(item);
         }
 
-        public void Clear()
+        public override void Clear()
         {
             //just set count to zero
             //to optimize performance
             _count = 0;
         }
 
-        public bool Contains(T item)
+        public override bool Contains(T item)
         {
             if (IsEmpty())
                 return false;
@@ -204,7 +192,7 @@ namespace FunctionalExtentions.Collections.Queues
             return _dequeCollection == null || Count == 0;
         }
 
-        public void CopyTo(T[] array, int arrayIndex)
+        public override void CopyTo(T[] array, int arrayIndex)
         {
             if (IsEmpty())
                 return;
@@ -212,7 +200,7 @@ namespace FunctionalExtentions.Collections.Queues
             Array.Copy(_dequeCollection, 0, array, arrayIndex, _count);
         }
 
-        public bool Remove(T item)
+        public override bool Remove(T item)
         {
             //TODO: add proper remove implementation
             if (!Contains(item))
@@ -236,36 +224,9 @@ namespace FunctionalExtentions.Collections.Queues
             return true;
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public override IEnumerator<T> GetEnumerator()
         {
             return new DequeEnumerator(this);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-        #endregion
-
-        #region Collection growing
-        private ExtendCollectionInfo GetCollectionInfo()
-        {
-            return new ExtendCollectionInfo(Count, _capacity, DefaultCapacity,
-                DefaultGrowingRate, GrowingScaleLimit, GrowingScale
-            );
-        }
-
-        private void Extend(int newElementsCount = 0)
-        {
-            var scalingPoint = CollectionArrayHelper.GetScalingPoint(newElementsCount, GetCollectionInfo());
-            var newArray = new T[_capacity + scalingPoint];
-
-            if (_dequeCollection != null && Count > 0)
-                Array.Copy(_dequeCollection, newArray, _dequeCollection.Length);
-
-            _dequeCollection = newArray;
-
-            _capacity = _dequeCollection.Length;
         }
         #endregion
 

@@ -7,19 +7,9 @@ using FunctionalExtentions.Abstract;
 
 namespace FunctionalExtentions.Collections
 {
-    public class ArrayList<T> : IValueList<T>, ICloneable<ArrayList<T>>
+    public class ArrayList<T> : ValueCollectionBase<T>, IValueList<T>, ICloneable<ArrayList<T>>
     {
-        public const int DefaultCapacity = 10;
-        private const int DefaultGrowingRate = 9;
-        private const double GrowingScaleLimit = 0.9;
-        private const double GrowingScale = 0.5;
-
-        private int _capacity;
-        private int _count;
-
         private T[] _list;
-
-        private bool _isReadOnly;
 
         public ArrayList() : this(DefaultCapacity) { }
 
@@ -90,17 +80,13 @@ namespace FunctionalExtentions.Collections
             }
         }
 
-        public int Count => _count;
-
-        public bool IsReadOnly => _isReadOnly;
-
-        public void Add(T item)
+        public override void Add(T item)
         {
             if (!IsReadOnly)
             {
                 if (CollectionArrayHelper.CheckCapacity(1, GetCollectionInfo()))
                 {
-                    Extend(1);
+                    Extend(ref _list, 1);
                 }
 
                 _list[Count] = item;
@@ -121,7 +107,7 @@ namespace FunctionalExtentions.Collections
 
                 if (CollectionArrayHelper.CheckCapacity(insertedCount, GetCollectionInfo()))
                 {
-                    Extend(insertedCount);
+                    Extend(ref _list, insertedCount);
                 }
 
                 foreach (var item in collection)
@@ -190,7 +176,7 @@ namespace FunctionalExtentions.Collections
             return ~low;
         }
 
-        public void Clear()
+        public override void Clear()
         {
             if (!IsReadOnly)
             {
@@ -204,7 +190,7 @@ namespace FunctionalExtentions.Collections
             }
         }
 
-        public bool Contains(T item)
+        public override bool Contains(T item)
         {
             bool result = false;
 
@@ -257,7 +243,7 @@ namespace FunctionalExtentions.Collections
             }
         }
 
-        public void CopyTo(T[] array, int arrayIndex)
+        public override void CopyTo(T[] array, int arrayIndex)
         {
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
@@ -492,7 +478,7 @@ namespace FunctionalExtentions.Collections
             }
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public override IEnumerator<T> GetEnumerator()
         {
             return new ArrayListEnumerator(this);
         }
@@ -566,7 +552,7 @@ namespace FunctionalExtentions.Collections
 
             if (CollectionArrayHelper.CheckCapacity(1, GetCollectionInfo()))
             {
-                Extend(1);
+                Extend(ref _list, 1);
             }
 
             T temp = _list[index];
@@ -604,7 +590,7 @@ namespace FunctionalExtentions.Collections
 
                 if (CollectionArrayHelper.CheckCapacity(insertedCount, GetCollectionInfo()))
                 {
-                    Extend(insertedCount);
+                    Extend(ref _list, insertedCount);
                 }
 
                 for (int i = index; i < index + insertedCount; i++)
@@ -661,7 +647,7 @@ namespace FunctionalExtentions.Collections
             return result;
         }
 
-        public bool Remove(T item)
+        public override bool Remove(T item)
         {
             if (IsReadOnly)
                 throw new InvalidOperationException("Cannot remove from read-only collection");
@@ -839,25 +825,6 @@ namespace FunctionalExtentions.Collections
         }
 
         #region Capacity helpers
-
-        private ExtendCollectionInfo GetCollectionInfo()
-        {
-            return new ExtendCollectionInfo(Count, Capacity, DefaultCapacity,
-                DefaultGrowingRate, GrowingScaleLimit, GrowingScale
-            );
-        }
-
-        private void Extend(int newElementsCount = 0)
-        {
-            var scalingPoint = CollectionArrayHelper.GetScalingPoint(newElementsCount, GetCollectionInfo());
-            var newArray = new T[_capacity + scalingPoint];
-
-            if (!IsEmpty())
-                Array.Copy(_list, newArray, _list.Length);
-
-            _list = newArray;
-            _capacity = _list.Length;
-        }
 
         private void RearrangeArrayWithCapacity(int capacity)
         {

@@ -7,17 +7,9 @@ using System.Linq;
 
 namespace FunctionalExtentions.Collections
 {
-    public class ValueStack<T> : IStack<T>, ICloneable<ValueStack<T>>
+    public class ValueStack<T> : ValueCollectionBase<T>, IStack<T>, ICloneable<ValueStack<T>>
     {
-        public const int DefaultCapacity = 10;
-        private const int DefaultGrowingRate = 9;
-        private const double GrowingScaleLimit = 0.9;
-        private const double GrowingScale = 0.5;
-
         private T[] _stackCollection;
-        private int _count;
-        private int _capacity;
-        private bool _isReadOnly;
 
         public ValueStack() : this(DefaultCapacity) { }
 
@@ -55,11 +47,7 @@ namespace FunctionalExtentions.Collections
             }
         }
 
-        public int Count => _count;
-
-        public bool IsReadOnly => _isReadOnly;
-
-        public void Add(T item)
+        public override void Add(T item)
         {
             if (!IsReadOnly)
                 Push(item);
@@ -69,7 +57,7 @@ namespace FunctionalExtentions.Collections
             }
         }
 
-        public void Clear()
+        public override void Clear()
         {
             if (!IsReadOnly)
             {
@@ -88,7 +76,7 @@ namespace FunctionalExtentions.Collections
             return new ValueStack<T>(this);
         }
 
-        public bool Contains(T item)
+        public override bool Contains(T item)
         {
             bool contains = false;
 
@@ -104,7 +92,7 @@ namespace FunctionalExtentions.Collections
             return contains;
         }
 
-        public void CopyTo(T[] array, int arrayIndex)
+        public override void CopyTo(T[] array, int arrayIndex)
         {
             if (array == null || array.Length < Count)
                 throw new ArgumentException("Invalid array passed");
@@ -121,12 +109,12 @@ namespace FunctionalExtentions.Collections
             }
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public override IEnumerator<T> GetEnumerator()
         {
             return new StackEnumerator(this);
         }
 
-        public bool Remove(T item)
+        public override bool Remove(T item)
         {
             if (IsReadOnly)
                 throw new InvalidOperationException("Cannot remove from read-only collection");
@@ -157,11 +145,6 @@ namespace FunctionalExtentions.Collections
             return result;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
         public T Peek()
         {
             if (Count <= 0)
@@ -189,7 +172,7 @@ namespace FunctionalExtentions.Collections
             {
                 if (CollectionArrayHelper.CheckCapacity(1, GetCollectionInfo()))
                 {
-                    Extend(1);
+                    Extend(ref _stackCollection, 1);
                 }
 
                 _stackCollection[Count] = item;
@@ -237,29 +220,6 @@ namespace FunctionalExtentions.Collections
                 return _stackCollection[index];
             }
         }
-
-        #region Stack helpers
-
-        private ExtendCollectionInfo GetCollectionInfo()
-        {
-            return new ExtendCollectionInfo(Count, _capacity, DefaultCapacity,
-                DefaultGrowingRate, GrowingScaleLimit, GrowingScale
-            );
-        }
-
-        private void Extend(int newElementsCount = 0)
-        {
-            var scalingPoint = CollectionArrayHelper.GetScalingPoint(newElementsCount, GetCollectionInfo());
-            var newArray = new T[_capacity + scalingPoint];
-
-            if (_stackCollection != null && Count > 0)
-                Array.Copy(_stackCollection, newArray, _stackCollection.Length);
-
-            _stackCollection = newArray;
-            _capacity = _stackCollection.Length;
-        }
-
-        #endregion Stack helpers
 
         private struct StackEnumerator : IEnumerator<T>
         {
