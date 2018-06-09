@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\Builder.cs" />
     <Compile Include="Compability\Comparers\CompatibilityComparerBase.cs" />
     <Compile Include="Compability\Comparers\FieldCompatibilityComparer.cs" />
     <Compile Include="ICompatibilityComparer.cs" />
