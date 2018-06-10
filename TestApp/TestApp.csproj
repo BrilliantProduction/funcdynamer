@@ -56,6 +56,10 @@
       <Project>{0989d485-d6ae-4049-912f-6ce2e83012e7}</Project>
       <Name>FunctionalExtentions.Abstract</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FunctionalExtentions.Dependencies\FunctionalExtentions.Dependencies.csproj">
+      <Project>{fe7c58b0-325d-492d-90df-224fec8c7c07}</Project>
+      <Name>FunctionalExtentions.Dependencies</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FunctionalExtentions.ValueCollections\FunctionalExtentions.Collections.csproj">
       <Project>{a851cf74-8d0d-4947-80cc-c59c83c28e4f}</Project>
       <Name>FunctionalExtentions.Collections</Name>

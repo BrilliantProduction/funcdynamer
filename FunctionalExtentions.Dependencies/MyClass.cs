@@ -22,7 +22,7 @@ namespace FunctionalExtentions.Dependencies
             var graphBuilder = DependencyGraphBuilder<MyClass>.GetBuilder(this);
             graphBuilder.CreateDependency(x => x.AwesomeProperty, x => x.AwesomeDependentProperty)
                         .WithAction((x) => AwesomeDependentProperty.Value = 0)
-                        .Build();
+                        .Submit();
 
 
             // This should throw error

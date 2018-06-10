@@ -16,6 +16,8 @@ namespace FunctionalExtentions.Dependencies
 
         public Type ValueType => _dependencyValue.ValueType;
 
+        internal IDependencyValue DependencyValue => _dependencyValue;
+
         public DependencyKey(IDependencyValue dependency, string name)
         {
             _dependencyValue = dependency;

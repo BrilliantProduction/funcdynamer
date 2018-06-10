@@ -27,6 +27,10 @@ namespace FunctionalExtentions.Dependencies
             SubscribeOnDependencyChange();
         }
 
+        public IDependencyValue DependencySource => _sourceProperty;
+
+        public IDependencyValue DependentValue => _targetProperty;
+
         private void SubscribeOnDependencyChange()
         {
             _sourceProperty.DependencyValueChanged += OnDependencyChanged;
@@ -89,7 +93,7 @@ namespace FunctionalExtentions.Dependencies
             var link = obj as DependencyLink;
             if (link == null) return false;
 
-            return _sourceProperty.Equals(link._sourceProperty) && _targetProperty.Equals(link._targetProperty);
+            return DependencySource.Equals(link.DependencySource) && DependentValue.Equals(link.DependentValue);
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FunctionalExtentions.Dependencies;
 
 namespace TestApp
 {
@@ -42,6 +43,9 @@ namespace TestApp
             //}
 
             //SortingAlgorithmsTester.DoTest();
+
+            var my = new MyClass();
+
             var deque = new Deque<int>();
             for (int i = 0; i < 50; i++)
             {

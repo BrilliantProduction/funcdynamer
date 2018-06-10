@@ -6,6 +6,10 @@ namespace FunctionalExtentions.Dependencies
     {
         private IDependencyValue _source;
         private IDependencyValue _target;
+        private DependencyKey _sourceKey;
+        private DependencyKey _targetKey;
+
+        private DependencyGraphBuilder<TObject> _graphBuilder;
 
         private Action<TSourceValue> _updatedHandler;
         private Func<TSourceValue, TTargetValue> _coercer;
@@ -14,10 +18,17 @@ namespace FunctionalExtentions.Dependencies
 
         private bool HasCoercer => _coercer != null;
 
-        public DependencyBuilder(IDependencyValue source, IDependencyValue target)
+        public DependencyKey Source => _sourceKey;
+
+        public DependencyKey DependentKey => _targetKey;
+
+        public DependencyBuilder(DependencyKey sourceKey, DependencyKey dependentKey, IDependencyValue source, IDependencyValue target, DependencyGraphBuilder<TObject> graphBuilder)
         {
+            _sourceKey = sourceKey;
+            _targetKey = dependentKey;
             _source = source;
             _target = target;
+            _graphBuilder = graphBuilder;
         }
 
         public DependencyBuilder<TObject, TSourceValue, TTargetValue> WithAction(Action<TSourceValue> action)
@@ -42,6 +53,12 @@ namespace FunctionalExtentions.Dependencies
 
             _coercer = coercer;
             return this;
+        }
+
+        public void Submit()
+        {
+            // Send dependency to graph builder
+            _graphBuilder.SubmitDependency(this);
         }
 
         public DependencyLink Build()
