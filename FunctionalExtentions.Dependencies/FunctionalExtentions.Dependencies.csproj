@@ -41,6 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\DependencyBuilder.cs" />
+    <Compile Include="DependencyKey.cs" />
+    <Compile Include="DependencyLink.cs" />
+    <Compile Include="DependencyValue.cs" />
+    <Compile Include="Builders\DependencyGraphBuilder.cs" />
+    <Compile Include="DependencyGraph.cs" />
+    <Compile Include="Interfaces\IDependencyValue.cs" />
+    <Compile Include="Interfaces\IDependencyHolder.cs" />
+    <Compile Include="MyClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
