@@ -61,6 +61,9 @@ namespace FunctionalExtentions.Dependencies
             get { return Value; }
             set
             {
+                if (ValueType.IsValueType && value == null)
+                    return;
+
                 Value = (TValue)value;
             }
         }
