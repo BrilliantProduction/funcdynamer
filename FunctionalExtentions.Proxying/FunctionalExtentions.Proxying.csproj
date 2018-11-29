@@ -54,9 +54,9 @@
     <Compile Include="Compability\Checkers\StructCompabilityChecker.cs" />
     <Compile Include="Compability\Checkers\TypeCompabilityChecker.cs" />
     <Compile Include="Enums\ConstructedType.cs" />
-    <Compile Include="EmitContext.cs" />
+    <Compile Include="Emitting\EmitContext.cs" />
     <Compile Include="Proxy.cs" />
-    <Compile Include="TypeEmitter.cs" />
+    <Compile Include="Emitting\TypeEmitter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj">
