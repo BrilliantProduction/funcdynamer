@@ -1,4 +1,4 @@
-﻿namespace FunctionalExtentions.Abstract.ValueCollections
+﻿namespace FunctionalExtentions.Abstract.Collections
 {
     public interface IStack<T> : IValueCollection<T>
     {

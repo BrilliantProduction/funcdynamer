@@ -1,4 +1,5 @@
 ﻿using FunctionalExtentions.Proxying.Enums;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -77,13 +78,18 @@ namespace FunctionalExtentions.Proxying.Compability.Comparers
             if (!ignoreDefaultParameters && secondMethodParameters.Length != firstMethodParameters.Length)
                 return false;
 
-            int length = firstMethodParameters.Length > secondMethodParameters.Length ?
-                secondMethodParameters.Length : firstMethodParameters.Length;
+            var firstParameters = firstMethodParameters.Where(x => !x.HasDefaultValue).ToList();
+            var secondParameters = secondMethodParameters.Where(x => !x.HasDefaultValue).ToList();
+
+            if(firstParameters.Count != secondParameters.Count)
+                return false;
+
+            int length = firstParameters.Count;
 
             for (int i = 0; i < length; i++)
             {
-                ParameterInfo firstParameter = firstMethodParameters[i];
-                ParameterInfo secondParameter = secondMethodParameters.FirstOrDefault(x => x.Position == firstParameter.Position);//secondMethodParameters[i];
+                ParameterInfo firstParameter = firstParameters[i];
+                ParameterInfo secondParameter = secondParameters.FirstOrDefault(x => x.Position == firstParameter.Position); //secondParameters[i]
 
                 if (!AreParametersCompatible(firstParameter, secondParameter))
                     return false;
@@ -96,6 +102,9 @@ namespace FunctionalExtentions.Proxying.Compability.Comparers
         {
             if (firstParameter == null && secondParameter != null ||
                 firstParameter != null && secondParameter == null)
+                return false;
+
+            if (firstParameter.Attributes != secondParameter.Attributes)
                 return false;
 
             if (firstParameter.ParameterType != secondParameter.ParameterType &&

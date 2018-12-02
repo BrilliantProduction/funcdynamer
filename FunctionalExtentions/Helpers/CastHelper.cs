@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FunctionalExtentions.Core.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -90,12 +91,7 @@ namespace FunctionalExtentions
 
             bool result = false;
             if (from.IsPrimitive && to.IsPrimitive && from.HasInterface(ConvertibleType))
-            {
-                var toMethodName = $"{ConvertibleType.FullName}.To{to.Name}";
-                var convertMethod = from.GetMembers(All).FirstOrDefault(x => x.Name.Equals(toMethodName));
-                if (convertMethod != null)
-                    result = true;
-            }
+                result = PrimitiveCastHelper.CanImplicitCast(from, to);
             else
                 result = CheckCast(from, to, OpImplicit);
 

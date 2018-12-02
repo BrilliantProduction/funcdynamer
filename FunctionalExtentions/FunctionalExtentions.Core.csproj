@@ -54,11 +54,12 @@
     <Compile Include="Activator\DynamicActivator.cs" />
     <Compile Include="DuckTyping\Ducker.cs" />
     <Compile Include="Exceptions\InvalidArgumentException.cs" />
+    <Compile Include="Helpers\PrimitiveCastHelper.cs" />
     <Compile Include="Helpers\ThrowHelper.cs" />
     <Compile Include="Optional.cs" />
     <Compile Include="Exceptions\OptionalCastException.cs" />
     <Compile Include="Helpers\CastHelper.cs" />
-    <Compile Include="Helpers\ReflectionTypeExentions.cs" />
+    <Compile Include="Helpers\ReflectionTypeExtentions.cs" />
     <Compile Include="TreeNode.cs" />
     <Compile Include="UnsafeHandler\ExceptionTransformer.cs" />
     <Compile Include="UnsafeHandler\ExceptionHelper.cs" />

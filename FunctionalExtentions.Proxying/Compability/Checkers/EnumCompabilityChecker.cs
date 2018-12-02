@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace FunctionalExtentions.Proxying.Compability.Checkers
 {
+    //TODO: rewrite this for better logic and
+    //flexibility
     public static class EnumCompabilityChecker
     {
         public static bool CheckIfEnumCompatible(Type enumFrom, Type enumTo, bool checkExplicitCast = false)
