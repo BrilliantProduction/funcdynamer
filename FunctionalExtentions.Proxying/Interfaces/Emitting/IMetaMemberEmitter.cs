@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace FunctionalExtentions.Proxying.Interfaces
+namespace FunctionalExtentions.Proxying.Interfaces.Emitting
 {
     public interface IMetaMemberEmitter : IMetaEmitter
     {

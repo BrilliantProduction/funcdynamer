@@ -2,7 +2,7 @@
 
 using FunctionalExtentions.Proxying.Emitting;
 
-namespace FunctionalExtentions.Proxying.Interfaces
+namespace FunctionalExtentions.Proxying.Interfaces.Emitting
 {
     /// <summary>
     /// Represents a CLR metadata emitter
