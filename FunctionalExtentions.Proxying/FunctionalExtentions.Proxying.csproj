@@ -42,21 +42,29 @@
   <ItemGroup>
     <Compile Include="Compability\Comparers\CompatibilityComparerBase.cs" />
     <Compile Include="Compability\Comparers\FieldCompatibilityComparer.cs" />
-    <Compile Include="ICompatibilityComparer.cs" />
+    <Compile Include="Emitting\TypeEmitterBase.cs" />
+    <Compile Include="Emitting\Utility\AttibutesUtil.cs" />
+    <Compile Include="Enums\EmitResultCode.cs" />
+    <Compile Include="Emitting\EmitResult.cs" />
+    <Compile Include="Interfaces\ICompatibilityComparer.cs" />
     <Compile Include="Compability\Comparers\GeneralCompatibilityComparer.cs" />
     <Compile Include="Compability\Comparers\MethodCompatibilityComparer.cs" />
     <Compile Include="Compability\Comparers\PropertyCompatibilityComparer.cs" />
     <Compile Include="Enums\Modifiers.cs" />
     <Compile Include="Enums\PropertyAccessors.cs" />
+    <Compile Include="Interfaces\Emitting\IMetaEmitter.cs" />
+    <Compile Include="Interfaces\Emitting\IMetaMemberEmitter.cs" />
+    <Compile Include="Meta\Mappings\ClrTypeMapping.cs" />
+    <Compile Include="Meta\Mappings\MappingBase.cs" />
+    <Compile Include="Meta\Mappings\MethodMapping.cs" />
+    <Compile Include="Meta\Mappings\PropertyMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Compability\Checkers\ClassCompabilityChecker.cs" />
     <Compile Include="Compability\Checkers\EnumCompabilityChecker.cs" />
     <Compile Include="Compability\Checkers\StructCompabilityChecker.cs" />
     <Compile Include="Compability\Checkers\TypeCompabilityChecker.cs" />
     <Compile Include="Enums\ConstructedType.cs" />
-    <Compile Include="Emitting\EmitContext.cs" />
     <Compile Include="Proxy.cs" />
-    <Compile Include="Emitting\TypeEmitter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj">
@@ -68,5 +76,6 @@
       <Name>FunctionalExtentions.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
