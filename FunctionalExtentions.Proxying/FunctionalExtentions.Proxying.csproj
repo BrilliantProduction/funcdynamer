@@ -43,6 +43,9 @@
     <Compile Include="Builders\Builder.cs" />
     <Compile Include="Compability\Comparers\CompatibilityComparerBase.cs" />
     <Compile Include="Compability\Comparers\FieldCompatibilityComparer.cs" />
+    <Compile Include="Emitting\Members\EventEmitter.cs" />
+    <Compile Include="Emitting\Members\MemberEmitterBase.cs" />
+    <Compile Include="Emitting\Members\MethodEmitter.cs" />
     <Compile Include="Emitting\TypeEmitterBase.cs" />
     <Compile Include="Emitting\Utility\AttibutesUtil.cs" />
     <Compile Include="Enums\EmitResultCode.cs" />
@@ -77,6 +80,8 @@
       <Name>FunctionalExtentions.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Emitting\Types\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
