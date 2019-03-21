@@ -26,6 +26,17 @@ namespace FunctionalExtentions.Tests.Activator
         }
 
         [Test]
+        public void MakeObject_CreateDateTimeWithSixParameters()
+        {
+            //Arrange & Act
+            var expected = new DateTime(2017, 11, 7, 10, 51, 15);
+            var date = DynamicActivator.MakeObjectWithParams<DateTime>(2017, 11, 7, 10, 51, 15);
+
+            //Assert
+            Assert.AreEqual(expected, date);
+        }
+
+        [Test]
         public void MakeObject_CreateList()
         {
             //Arrange & Act
