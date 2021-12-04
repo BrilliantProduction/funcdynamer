@@ -1,80 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A851CF74-8D0D-4947-80CC-C59C83C28E4F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FunctionalExtentions.Collections</RootNamespace>
-    <AssemblyName>FunctionalExtentions.Collections</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFrameworks>netstandard2.1;net45</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Helpers\CollectionArrayHelper.cs" />
-    <Compile Include="Helpers\CollectionExtensions.cs" />
-    <Compile Include="Helpers\ExtendCollectionInfo.cs" />
-    <Compile Include="Lists\ArrayList.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Queues\Deque.cs" />
-    <Compile Include="Queues\ValueQueue.cs" />
-    <Compile Include="Queues\ValueStack.cs" />
-    <Compile Include="Sorting\BubbleSortAlgorithm.cs" />
-    <Compile Include="Sorting\InsertionSortAlgorithm.cs" />
-    <Compile Include="Sorting\IterativeMergeSortAlgorithm.cs" />
-    <Compile Include="Sorting\MergeSortAlgorithm.cs" />
-    <Compile Include="Sorting\SelectionSortAlgorithm.cs" />
-    <Compile Include="Sorting\SortDirection.cs" />
-    <Compile Include="Sorting\SortingAlgorithm.cs" />
-    <Compile Include="Trees\BinarySearchTree.cs" />
-    <Compile Include="Trees\RedBlackTree.cs" />
-    <Compile Include="Trees\RedBlackTreeNode.cs" />
-    <Compile Include="ValueCollectionBase.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj">
-      <Project>{0989D485-D6AE-4049-912F-6CE2E83012E7}</Project>
-      <Name>FunctionalExtentions.Abstract</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Sets\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
