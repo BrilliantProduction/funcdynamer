@@ -1,67 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FE7C58B0-325D-492D-90DF-224FEC8C7C07}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FunctionalExtentions.Dependencies</RootNamespace>
-    <AssemblyName>FunctionalExtentions.Dependencies</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworks>netstandard2.1;net45</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Builders\DependencyBuilder.cs" />
-    <Compile Include="Graph\DependencyKey.cs" />
-    <Compile Include="Graph\DependencyLink.cs" />
-    <Compile Include="Graph\DependencyOptions.cs" />
-    <Compile Include="Graph\DependencyValue.cs" />
-    <Compile Include="Builders\DependencyGraphBuilder.cs" />
-    <Compile Include="Graph\DependencyGraph.cs" />
-    <Compile Include="Interfaces\IDependencyValue.cs" />
-    <Compile Include="Interfaces\IDependencyHolder.cs" />
-    <Compile Include="MyClass.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FunctionalExtentions.Abstract\FunctionalExtentions.Abstract.csproj">
-      <Project>{0989d485-d6ae-4049-912f-6ce2e83012e7}</Project>
-      <Name>FunctionalExtentions.Abstract</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FunctionalExtentions\FunctionalExtentions.Core.csproj">
-      <Project>{98c6124c-d894-47b3-bd6a-7da401a5603f}</Project>
-      <Name>FunctionalExtentions.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
