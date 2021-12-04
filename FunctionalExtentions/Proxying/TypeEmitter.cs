@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FunctionalExtentions.Proxying
 {
@@ -19,7 +15,7 @@ namespace FunctionalExtentions.Proxying
             var asmName = new AssemblyName(assemblyName);
             var moduleName = context.ModuleName ?? "Dynamic" + context.TypeName + "Module";
 
-            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.Run);
+            var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.Run);
             return assemblyBuilder.DefineDynamicModule(moduleName);
         }
 
